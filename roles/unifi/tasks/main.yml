@@ -1,0 +1,37 @@
+---
+# tasks file for unifi
+
+- name: Create /opt/docker/unifi directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  become: true
+  loop:
+    - /opt/docker/unifi
+    - /opt/docker/unifi/unifi-data
+    - /opt/docker/unifi/mongodb
+
+- name: Render unifi docker-compose.yml from template
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/docker/unifi/docker-compose.yml
+    mode: '0600'
+  become: true
+  notify: Restart unifi compose project
+
+- name: Install MongoDB initialization script
+  ansible.builtin.copy:
+    src: init-mongo.sh
+    dest: /opt/docker/unifi/init-mongo.sh
+    mode: '0755'
+  become: true
+  notify: Restart unifi compose project
+
+- name: Deploy unifi via docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/unifi/
+    files:
+      - docker-compose.yml
+    state: present
+  become: true

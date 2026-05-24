@@ -1,0 +1,69 @@
+services:
+  unifi-network-application:
+    image: lscr.io/linuxserver/unifi-network-application:latest
+    container_name: unifi-network-application
+    environment:
+      - PUID={{ unifi_puid }}
+      - PGID={{ unifi_pgid }}
+      - TZ={{ unifi_timezone }}
+      - MONGO_USER={{ unifi_mongo_user }}
+      - MONGO_PASS={{ unifi_mongo_pass }}
+      - MONGO_HOST={{ unifi_mongo_host }}
+      - MONGO_PORT={{ unifi_mongo_port }}
+      - MONGO_DBNAME={{ unifi_mongo_dbname }}
+      - MONGO_AUTHSOURCE={{ unifi_mongo_authsource }}
+      - MEM_LIMIT={{ unifi_mem_limit }} #optional
+      - MEM_STARTUP={{ unifi_mem_startup }} #optional
+      - MONGO_TLS={{ unifi_mongo_tls }} #optional
+    volumes:
+      - /opt/docker/unifi/unifi-data:/config
+    ports:
+      - 8443:8443
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 1900:1900/udp #optional
+      - 8843:8843 #optional
+      - 8880:8880 #optional
+      - 6789:6789 #optional
+      - 5514:5514/udp #optional
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy_network"
+      - "traefik.http.routers.unifi-network-application.rule=Host(`{{ unifi_hostname }}`)"
+      - "traefik.http.routers.unifi-network-application.entrypoints=websecure"
+      - "traefik.http.routers.unifi-network-application.tls.certresolver=cloudflare"
+      - "traefik.http.routers.unifi-network-application.tls=true"
+      - "traefik.http.services.unifi-network-application.loadbalancer.server.scheme=https"
+      # Use the insecure-transport defined in traefik dynamic configuration to connect to the unifi app over https without cert validation
+      - "traefik.http.services.unifi-network-application.loadbalancer.serversTransport=insecure-transport@file"
+      - "traefik.http.services.unifi-network-application.loadbalancer.server.port=8443"
+      - "traefik.http.services.unifi-network-application.loadbalancer.passhostheader=true"
+    networks:
+      - unifi_network
+      - proxy_network
+    restart: unless-stopped
+  unifi-db:
+    image: docker.io/mongo:{{ unifi_mongo_version }}
+    container_name: unifi-db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME={{ unifi_mongo_initdb_root_username }}
+      - MONGO_INITDB_ROOT_PASSWORD={{ unifi_mongo_initdb_root_password }}
+      - MONGO_USER={{ unifi_mongo_user }}
+      - MONGO_PASS={{ unifi_mongo_pass }}
+      - MONGO_DBNAME={{ unifi_mongo_dbname }}
+      - MONGO_AUTHSOURCE={{ unifi_mongo_authsource }}
+    volumes:
+      - /opt/docker/unifi/mongodb:/data/db
+      - /opt/docker/unifi/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+    networks:
+      - unifi_network
+    restart: unless-stopped
+
+networks:
+  unifi_network:
+    driver: bridge
+    name: unifi-network
+  proxy_network:
+    external: true
+    name: proxy_network

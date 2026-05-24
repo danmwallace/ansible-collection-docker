@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Apply unifi role with test values
+      ansible.builtin.include_role:
+        name: danmwallace.docker.unifi
+      vars:
+        unifi_hostname: unifi.test.local
+        unifi_mongo_pass: test-mongo-pw
+        unifi_mongo_initdb_root_password: test-root-pw

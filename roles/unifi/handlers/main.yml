@@ -1,0 +1,10 @@
+---
+# handlers file for unifi
+
+- name: Restart unifi compose project
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/unifi/
+    files:
+      - docker-compose.yml
+    state: restarted
+  become: true

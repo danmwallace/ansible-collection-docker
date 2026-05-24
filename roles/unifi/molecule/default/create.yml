@@ -1,0 +1,16 @@
+---
+- name: Create molecule instance
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Start unifi-instance container
+      containers.podman.podman_container:
+        name: unifi-instance
+        image: quay.io/ansible/molecule-ubuntu:noble
+        state: started
+        command: /sbin/init
+        privileged: true
+        systemd: always
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+        cgroupns: host

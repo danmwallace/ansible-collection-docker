@@ -1,0 +1,27 @@
+---
+# SPDX-License-Identifier: MIT
+galaxy_info:
+  role_name: unifi
+  namespace: danmwallace
+  author: Dan Wallace
+  description: Deploy UniFi Network Application (linuxserver image) with a MongoDB backend behind Traefik via Docker Compose.
+  license: MIT
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - docker
+    - unifi
+    - ubiquiti
+    - network
+    - mongodb
+    - linuxserver
+    - traefik
+
+dependencies: []

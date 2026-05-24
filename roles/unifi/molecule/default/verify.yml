@@ -1,0 +1,62 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Stat the project and bind-mount directories
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /opt/docker/unifi
+        - /opt/docker/unifi/unifi-data
+        - /opt/docker/unifi/mongodb
+      register: unifi_dirs
+
+    - name: Assert directories exist
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.isdir
+      loop: "{{ unifi_dirs.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Stat the rendered docker-compose file
+      ansible.builtin.stat:
+        path: /opt/docker/unifi/docker-compose.yml
+      register: unifi_compose_stat
+
+    - name: Assert docker-compose was rendered with the expected mode
+      ansible.builtin.assert:
+        that:
+          - unifi_compose_stat.stat.exists
+          - unifi_compose_stat.stat.mode == '0600'
+
+    - name: Stat the MongoDB init script
+      ansible.builtin.stat:
+        path: /opt/docker/unifi/init-mongo.sh
+      register: unifi_init_mongo_stat
+
+    - name: Assert init-mongo.sh was installed as executable
+      ansible.builtin.assert:
+        that:
+          - unifi_init_mongo_stat.stat.exists
+          - unifi_init_mongo_stat.stat.mode == '0755'
+
+    - name: Read rendered docker-compose file
+      ansible.builtin.slurp:
+        src: /opt/docker/unifi/docker-compose.yml
+      register: unifi_compose_contents
+
+    - name: Assert template substituted hostname, mongo creds, and resource limits
+      vars:
+        rendered: "{{ unifi_compose_contents.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'lscr.io/linuxserver/unifi-network-application' in rendered"
+          - "'docker.io/mongo:7.0.26' in rendered"
+          - "'MONGO_PASS=test-mongo-pw' in rendered"
+          - "'MONGO_INITDB_ROOT_PASSWORD=test-root-pw' in rendered"
+          - "'MONGO_PORT=27017' in rendered"
+          - "'MEM_LIMIT=1024' in rendered"
+          - "'traefik.http.routers.unifi-network-application.rule=Host(`unifi.test.local`)' in rendered"

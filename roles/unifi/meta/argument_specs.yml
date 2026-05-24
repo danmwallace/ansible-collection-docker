@@ -1,0 +1,93 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy UniFi Network Application (linuxserver image) with a MongoDB backend behind Traefik via Docker Compose.
+    description:
+      - Renders a docker-compose.yml under /opt/docker/unifi that runs
+        lscr.io/linuxserver/unifi-network-application alongside a docker.io/mongo backing store,
+        installs an init-mongo.sh into the project directory so MongoDB seeds the UniFi user on
+        first boot, and brings the stack up via community.docker.docker_compose_v2.
+      - Publishes the standard UniFi controller ports (8443/8080/3478/10001/etc.) directly on the
+        host, joins the external proxy_network for Traefik, and routes the web UI on the
+        configured hostname over the insecure-transport@file middleware (UniFi serves HTTPS with
+        a self-signed cert that Traefik must not verify).
+    author:
+      - Dan Wallace
+    options:
+      unifi_hostname:
+        description: Public hostname Traefik routes to the UniFi web UI.
+        type: str
+        required: true
+      unifi_mongo_pass:
+        description: Password for the unprivileged MongoDB user (MONGO_PASS). Supply from vault.
+        type: str
+        required: true
+      unifi_mongo_initdb_root_password:
+        description: Password for the MongoDB root user (MONGO_INITDB_ROOT_PASSWORD), used by init-mongo.sh to create the unprivileged user. Supply from vault.
+        type: str
+        required: true
+      unifi_puid:
+        description: PUID passed to the linuxserver image (file owner inside the container).
+        type: int
+        required: false
+        default: 1000
+      unifi_pgid:
+        description: PGID passed to the linuxserver image (file group inside the container).
+        type: int
+        required: false
+        default: 1000
+      unifi_timezone:
+        description: Container TZ.
+        type: str
+        required: false
+        default: America/New_York
+      unifi_mongo_user:
+        description: MongoDB user the UniFi app authenticates as.
+        type: str
+        required: false
+        default: unifi
+      unifi_mongo_host:
+        description: Hostname (within the unifi_network) the UniFi app contacts MongoDB on.
+        type: str
+        required: false
+        default: unifi-db
+      unifi_mongo_port:
+        description: MongoDB port.
+        type: int
+        required: false
+        default: 27017
+      unifi_mongo_dbname:
+        description: MongoDB database name.
+        type: str
+        required: false
+        default: unifi
+      unifi_mongo_version:
+        description: Image tag for docker.io/mongo.
+        type: str
+        required: false
+        default: 7.0.26
+      unifi_mongo_authsource:
+        description: MongoDB auth source database.
+        type: str
+        required: false
+        default: admin
+      unifi_mongo_initdb_root_username:
+        description: MongoDB root username.
+        type: str
+        required: false
+        default: root
+      unifi_mongo_tls:
+        description: Whether the UniFi app should connect to MongoDB over TLS. String "true"/"false".
+        type: str
+        required: false
+        default: "false"
+      unifi_mem_limit:
+        description: MEM_LIMIT (MB) passed to the linuxserver image (JVM max heap).
+        type: int
+        required: false
+        default: 1024
+      unifi_mem_startup:
+        description: MEM_STARTUP (MB) passed to the linuxserver image (JVM initial heap).
+        type: int
+        required: false
+        default: 1024

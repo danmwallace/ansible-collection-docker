@@ -1,0 +1,20 @@
+---
+# SPDX-License-Identifier: MIT-0
+# defaults file for unifi
+# Reference: https://docs.linuxserver.io/images/docker-unifi-network-application/#setting-up-your-external-database
+
+unifi_puid: 1000
+unifi_pgid: 1000
+unifi_timezone: America/New_York
+
+unifi_mongo_user: unifi
+unifi_mongo_host: unifi-db
+unifi_mongo_port: 27017
+unifi_mongo_dbname: unifi
+unifi_mongo_version: 7.0.26
+unifi_mongo_authsource: admin
+unifi_mongo_initdb_root_username: root
+unifi_mongo_tls: "false"
+
+unifi_mem_limit: 1024
+unifi_mem_startup: 1024
