@@ -1,0 +1,9 @@
+---
+- name: Destroy molecule instance
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Stop and remove baserow-instance container
+      containers.podman.podman_container:
+        name: baserow-instance
+        state: absent

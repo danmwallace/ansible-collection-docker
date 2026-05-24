@@ -1,0 +1,10 @@
+---
+# handlers file for baserow
+
+- name: Restart baserow compose project
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/baserow/
+    files:
+      - docker-compose.yml
+    state: restarted
+  become: true

@@ -1,0 +1,26 @@
+---
+# SPDX-License-Identifier: MIT
+galaxy_info:
+  role_name: baserow
+  namespace: danmwallace
+  author: Dan Wallace
+  description: Deploy Baserow, an open-source no-code database, in Docker behind Traefik via Docker Compose.
+  license: MIT
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - docker
+    - baserow
+    - database
+    - nocode
+    - airtable
+    - traefik
+
+dependencies: []

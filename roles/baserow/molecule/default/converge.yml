@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Apply baserow role with test values
+      ansible.builtin.include_role:
+        name: danmwallace.docker.baserow
+      vars:
+        baserow_hostname: baserow.test.local

@@ -1,0 +1,20 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy Baserow, an open-source no-code database, in Docker behind Traefik via Docker Compose.
+    description:
+      - Renders a docker-compose.yml under /opt/docker/baserow that runs the all-in-one baserow/baserow
+        image (which bundles its own PostgreSQL and Redis) on the external proxy_network.
+      - Emits Traefik labels so the web UI is served on the supplied hostname.
+    author:
+      - Dan Wallace
+    options:
+      baserow_hostname:
+        description: Public hostname Traefik routes to Baserow; also fed to the container as BASEROW_PUBLIC_URL.
+        type: str
+        required: true
+      baserow_version:
+        description: Image tag for baserow/baserow.
+        type: str
+        required: false
+        default: "2.2.2"

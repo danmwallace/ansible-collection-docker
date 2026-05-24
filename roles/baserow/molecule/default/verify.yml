@@ -1,0 +1,30 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Stat the rendered docker-compose file
+      ansible.builtin.stat:
+        path: /opt/docker/baserow/docker-compose.yml
+      register: baserow_compose_stat
+
+    - name: Assert docker-compose file was rendered with the expected mode
+      ansible.builtin.assert:
+        that:
+          - baserow_compose_stat.stat.exists
+          - baserow_compose_stat.stat.mode == '0600'
+
+    - name: Read rendered docker-compose file
+      ansible.builtin.slurp:
+        src: /opt/docker/baserow/docker-compose.yml
+      register: baserow_compose_contents
+
+    - name: Assert template produced the expected image, public URL, and traefik wiring
+      vars:
+        rendered: "{{ baserow_compose_contents.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'baserow/baserow:2.2.2' in rendered"
+          - "'BASEROW_PUBLIC_URL: https://baserow.test.local' in rendered"
+          - "'traefik.http.routers.baserow.rule=Host(`baserow.test.local`)' in rendered"
+          - "'proxy_network' in rendered"

@@ -1,0 +1,25 @@
+---
+# tasks file for baserow
+
+- name: Ensure /opt/docker/baserow data directory exists
+  ansible.builtin.file:
+    path: /opt/docker/baserow/data
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Render baserow docker-compose.yml from template
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/docker/baserow/docker-compose.yml
+    mode: '0600'
+  become: true
+  notify: Restart baserow compose project
+
+- name: Deploy baserow via docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/baserow/
+    files:
+      - docker-compose.yml
+    state: present
+  become: true
