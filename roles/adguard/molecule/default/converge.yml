@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Apply adguard role with test values
+      ansible.builtin.include_role:
+        name: danmwallace.docker.adguard
+      vars:
+        adguard_hostname: adguard.test.local

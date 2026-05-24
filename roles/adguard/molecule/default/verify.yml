@@ -1,0 +1,51 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Stat the data directories
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /opt/docker/adguard/data
+        - /opt/docker/adguard/data/conf
+        - /opt/docker/adguard/data/work
+      register: adguard_data_dirs
+
+    - name: Assert data directories were created with expected ownership and mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.isdir
+          - item.stat.pw_name == 'ansible'
+          - item.stat.gr_name == 'docker'
+          - item.stat.mode == '0755'
+      loop: "{{ adguard_data_dirs.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Stat the rendered docker-compose file
+      ansible.builtin.stat:
+        path: /opt/docker/adguard/docker-compose.yml
+      register: adguard_compose_stat
+
+    - name: Assert docker-compose file was rendered
+      ansible.builtin.assert:
+        that:
+          - adguard_compose_stat.stat.exists
+          - adguard_compose_stat.stat.mode == '0600'
+
+    - name: Read rendered docker-compose file
+      ansible.builtin.slurp:
+        src: /opt/docker/adguard/docker-compose.yml
+      register: adguard_compose_contents
+
+    - name: Assert template produced the expected image, hostname, and traefik wiring
+      vars:
+        rendered: "{{ adguard_compose_contents.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'adguard/adguardhome:latest' in rendered"
+          - "'traefik.http.routers.adguard.rule=Host(`adguard.test.local`)' in rendered"
+          - "'53:53/udp' in rendered"
+          - "'proxy_network' in rendered"

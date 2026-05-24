@@ -1,0 +1,33 @@
+services:
+  adguard:
+    image: adguard/adguardhome:latest
+    restart: always
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      - 67:67/udp
+      - 853:853/tcp
+      - 853:853/udp
+      - 5443:5443/tcp
+      - 5443:5443/udp
+      - 8853:8853/udp
+    networks:
+      - proxy_network
+    volumes:
+      - ./data/conf:/opt/adguardhome/conf
+      - ./data/work:/opt/adguardhome/work
+    container_name: adguard
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy_network"
+      #- "traefik.http.services.adguard.loadbalancer.server.scheme=http"
+      - "traefik.http.services.adguard.loadbalancer.passhostheader=true"
+      - "traefik.http.routers.adguard.rule=Host(`{{ adguard_hostname }}`)"
+      - "traefik.http.routers.adguard.entrypoints=websecure"
+      - "traefik.http.routers.adguard.tls.certresolver=cloudflare"
+      - "traefik.http.services.adguard.loadbalancer.server.port=80"
+
+networks:
+  proxy_network:
+    external: true
+    name: proxy_network

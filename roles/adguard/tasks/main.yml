@@ -1,0 +1,31 @@
+---
+# tasks file for adguard
+
+- name: Create /opt/docker/adguard data directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: ansible
+    group: docker
+  become: true
+  loop:
+    - /opt/docker/adguard/data
+    - /opt/docker/adguard/data/conf
+    - /opt/docker/adguard/data/work
+
+- name: Render adguard docker-compose.yml from template
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/docker/adguard/docker-compose.yml
+    mode: '0600'
+  become: true
+  notify: Restart adguard compose project
+
+- name: Deploy adguard via docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/adguard/
+    files:
+      - docker-compose.yml
+    state: present
+  become: true

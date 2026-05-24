@@ -1,0 +1,10 @@
+---
+# handlers file for adguard
+
+- name: Restart adguard compose project
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/adguard/
+    files:
+      - docker-compose.yml
+    state: restarted
+  become: true
