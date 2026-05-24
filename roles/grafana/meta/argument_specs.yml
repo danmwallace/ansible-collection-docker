@@ -1,0 +1,45 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy Grafana in Docker behind Traefik via Docker Compose.
+    description:
+      - Renders a docker-compose.yml under /opt/docker/grafana that runs grafana/grafana:latest
+        on the external proxy_network, with Traefik labels routing the configured hostname to port 3000.
+      - Creates /opt/docker/grafana/data/provisioning and bind-mounts it into the container so
+        datasources/dashboards can be provisioned out-of-band.
+    author:
+      - Dan Wallace
+    options:
+      grafana_hostname:
+        description: Public hostname Traefik routes to Grafana.
+        type: str
+        required: true
+      grafana_admin_password:
+        description: Grafana admin password (GF_SECURITY_ADMIN_PASSWORD). Supply from vault.
+        type: str
+        required: true
+      grafana_server_root_url:
+        description: Public URL Grafana uses for links and callbacks (GF_SERVER_ROOT_URL).
+        type: str
+        required: false
+        default: "https://{{ grafana_hostname }}"
+      grafana_disable_login_form:
+        description: Whether to disable the Grafana login form (GF_SECURITY_DISABLE_GRAFANA_LOGIN_FORM_RENDERING). String, not bool.
+        type: str
+        required: false
+        default: "false"
+      grafana_install_plugins:
+        description: Comma-separated plugin list passed to GF_PLUGINS_PREINSTALL.
+        type: str
+        required: false
+        default: ""
+      grafana_cpu_limit:
+        description: Compose deploy.resources.limits.cpus value.
+        type: str
+        required: false
+        default: "2"
+      grafana_memory_limit:
+        description: Compose deploy.resources.limits.memory value (e.g. "2gb").
+        type: str
+        required: false
+        default: "2gb"

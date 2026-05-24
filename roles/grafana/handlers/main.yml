@@ -1,0 +1,10 @@
+---
+# handlers file for grafana
+
+- name: Restart grafana compose project
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/grafana/
+    files:
+      - docker-compose.yml
+    state: restarted
+  become: true

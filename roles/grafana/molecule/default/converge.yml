@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Apply grafana role with test values
+      ansible.builtin.include_role:
+        name: danmwallace.docker.grafana
+      vars:
+        grafana_hostname: grafana.test.local
+        grafana_admin_password: test-admin-password
+        grafana_cpu_limit: "1"
+        grafana_memory_limit: "512m"

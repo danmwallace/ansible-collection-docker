@@ -1,0 +1,43 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Stat the provisioning directory
+      ansible.builtin.stat:
+        path: /opt/docker/grafana/data/provisioning
+      register: grafana_provisioning_stat
+
+    - name: Assert provisioning directory was created
+      ansible.builtin.assert:
+        that:
+          - grafana_provisioning_stat.stat.exists
+          - grafana_provisioning_stat.stat.isdir
+
+    - name: Stat the rendered docker-compose file
+      ansible.builtin.stat:
+        path: /opt/docker/grafana/docker-compose.yml
+      register: grafana_compose_stat
+
+    - name: Assert docker-compose file was rendered with the expected mode
+      ansible.builtin.assert:
+        that:
+          - grafana_compose_stat.stat.exists
+          - grafana_compose_stat.stat.mode == '0600'
+
+    - name: Read rendered docker-compose file
+      ansible.builtin.slurp:
+        src: /opt/docker/grafana/docker-compose.yml
+      register: grafana_compose_contents
+
+    - name: Assert template substituted env vars, resource limits, hostname, and traefik labels
+      vars:
+        rendered: "{{ grafana_compose_contents.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'grafana/grafana:latest' in rendered"
+          - "'GF_SECURITY_ADMIN_PASSWORD=test-admin-password' in rendered"
+          - "'GF_SERVER_ROOT_URL=https://grafana.test.local' in rendered"
+          - "'traefik.http.routers.grafana.rule=Host(`grafana.test.local`)' in rendered"
+          - "'cpus: \"1\"' in rendered"
+          - "'memory: \"512m\"' in rendered"

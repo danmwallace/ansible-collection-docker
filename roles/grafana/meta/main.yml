@@ -1,0 +1,26 @@
+---
+# SPDX-License-Identifier: MIT
+galaxy_info:
+  role_name: grafana
+  namespace: danmwallace
+  author: Dan Wallace
+  description: Deploy Grafana in Docker behind Traefik via Docker Compose.
+  license: MIT
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - docker
+    - grafana
+    - monitoring
+    - observability
+    - dashboard
+    - traefik
+
+dependencies: []

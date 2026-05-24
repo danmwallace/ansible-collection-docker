@@ -1,0 +1,29 @@
+---
+# tasks file for grafana
+
+- name: Ensure /opt/docker/grafana directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  become: true
+  loop:
+    - /opt/docker/grafana
+    - /opt/docker/grafana/data
+    - /opt/docker/grafana/data/provisioning
+
+- name: Render grafana docker-compose.yml from template
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/docker/grafana/docker-compose.yml
+    mode: '0600'
+  become: true
+  notify: Restart grafana compose project
+
+- name: Deploy grafana via docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/grafana/
+    files:
+      - docker-compose.yml
+    state: present
+  become: true
