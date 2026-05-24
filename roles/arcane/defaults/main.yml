@@ -1,0 +1,9 @@
+---
+# SPDX-License-Identifier: MIT-0
+# defaults file for arcane
+
+arcane_version: latest
+
+arcane_postgres_db: arcane
+arcane_postgres_user: arcane
+arcane_database_url: "postgresql://{{ arcane_postgres_user }}:{{ arcane_postgres_password }}@arcane-postgres:5432/{{ arcane_postgres_db }}"

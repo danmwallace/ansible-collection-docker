@@ -1,0 +1,25 @@
+---
+# tasks file for arcane
+
+- name: Ensure arcane directory exists
+  ansible.builtin.file:
+    path: /opt/docker/arcane
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Render arcane docker-compose.yml from template
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/docker/arcane/docker-compose.yml
+    mode: '0600'
+  become: true
+  notify: Restart arcane compose project
+
+- name: Deploy arcane via docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/arcane/
+    files:
+      - docker-compose.yml
+    state: present
+  become: true

@@ -1,0 +1,46 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy Arcane, a modern web UI for managing Docker containers, via Docker Compose.
+    description:
+      - Renders a docker-compose.yml under /opt/docker/arcane and brings up the Arcane web UI together with its PostgreSQL backing store.
+      - Configures Traefik labels for HTTPS access on the configured hostname and joins the external proxy_network.
+    author:
+      - Dan Wallace
+    options:
+      arcane_hostname:
+        description: Public hostname the Arcane web UI is served on; used for APP_URL and the Traefik Host rule.
+        type: str
+        required: true
+      arcane_version:
+        description: Image tag for ghcr.io/getarcaneapp/arcane.
+        type: str
+        required: false
+        default: latest
+      arcane_encryption_key:
+        description: Encryption key used by Arcane (ENCRYPTION_KEY). Should be a long random string supplied from vault.
+        type: str
+        required: true
+      arcane_jwt_secret:
+        description: JWT signing secret used by Arcane (JWT_SECRET). Should be a long random string supplied from vault.
+        type: str
+        required: true
+      arcane_postgres_db:
+        description: PostgreSQL database name for Arcane.
+        type: str
+        required: false
+        default: arcane
+      arcane_postgres_user:
+        description: PostgreSQL user name for Arcane.
+        type: str
+        required: false
+        default: arcane
+      arcane_postgres_password:
+        description: PostgreSQL password for the Arcane user. Should be supplied from vault.
+        type: str
+        required: true
+      arcane_database_url:
+        description: Full PostgreSQL connection URL used by Arcane. Defaults to the bundled arcane-postgres service.
+        type: str
+        required: false
+        default: "postgresql://arcane:{{ arcane_postgres_password }}@arcane-postgres:5432/arcane"

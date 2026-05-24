@@ -1,0 +1,30 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Stat the rendered docker-compose file
+      ansible.builtin.stat:
+        path: /opt/docker/arcane/docker-compose.yml
+      register: arcane_compose_stat
+
+    - name: Assert docker-compose file was rendered
+      ansible.builtin.assert:
+        that:
+          - arcane_compose_stat.stat.exists
+          - arcane_compose_stat.stat.mode == '0600'
+
+    - name: Read rendered docker-compose file
+      ansible.builtin.slurp:
+        src: /opt/docker/arcane/docker-compose.yml
+      register: arcane_compose_contents
+
+    - name: Assert template substitutions produced the expected hostname, image, and traefik wiring
+      vars:
+        rendered: "{{ arcane_compose_contents.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'arcane.test.local' in rendered"
+          - "'ghcr.io/getarcaneapp/arcane:latest' in rendered"
+          - "'traefik.http.routers.arcane.rule=Host(`arcane.test.local`)' in rendered"
+          - "'POSTGRES_PASSWORD=test-postgres-password' in rendered"

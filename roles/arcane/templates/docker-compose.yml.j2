@@ -1,0 +1,67 @@
+# Arcane Docker Compose Configuration
+# Generated at 2/8/2026, 11:52:46 PM
+
+services:
+  arcane:
+    image: ghcr.io/getarcaneapp/arcane:{{ arcane_version }}
+    container_name: arcane
+    restart: unless-stopped
+    ports:
+      - 3552
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - arcane-data:/app/data
+    environment:
+      - APP_URL="https://{{ arcane_hostname }}"
+      - PUID=1000
+      - PGID=1000
+      - ENCRYPTION_KEY={{ arcane_encryption_key }}
+      - JWT_SECRET={{ arcane_jwt_secret }}
+      - LOG_LEVEL=info
+      - LOG_JSON=false
+      - POSTGRES_DB={{ arcane_postgres_db }}
+      - POSTGRES_USER={{ arcane_postgres_user }}
+      - POSTGRES_PASSWORD={{ arcane_postgres_password }}
+      - OIDC_ENABLED=true
+      - OIDC_SCOPES=openid email profile
+      - DATABASE_URL={{ arcane_database_url }}
+    depends_on:
+      - arcane-postgres
+    networks:
+      - arcane_network
+      - proxy_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy_network"
+      - "traefik.http.routers.arcane.rule=Host(`{{ arcane_hostname }}`)"
+      - "traefik.http.routers.arcane.entrypoints=websecure"
+      - "traefik.http.routers.arcane.tls.certresolver=cloudflare"
+      - "traefik.http.services.arcane.loadbalancer.server.port=3552"
+
+  arcane-postgres:
+    image: postgres:17-alpine
+    container_name: arcane-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB={{ arcane_postgres_db }}
+      - POSTGRES_USER={{ arcane_postgres_user }}
+      - POSTGRES_PASSWORD={{ arcane_postgres_password }}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432
+    networks:
+      - arcane_network
+
+volumes:
+  arcane-data:
+    driver: local
+  postgres-data:
+    driver: local
+
+networks:
+  arcane_network:
+    driver: "bridge"
+  proxy_network:
+    external: true
+    name: proxy_network
