@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Apply n8n role with test values
+      ansible.builtin.include_role:
+        name: danmwallace.docker.n8n
+      vars:
+        n8n_hostname: n8n.test.local
+        n8n_encryption_key: test-encryption-key-not-for-production
+        n8n_postgres_password: test-postgres-password

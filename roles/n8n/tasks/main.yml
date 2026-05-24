@@ -1,0 +1,35 @@
+---
+# tasks file for n8n
+
+- name: Create /opt/docker/n8n directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: ansible
+    group: docker
+    mode: '0755'
+  become: true
+  loop:
+    - /opt/docker/n8n
+    - /opt/docker/n8n/local-files
+    - /opt/docker/n8n/volumes/postgres-db
+    - /opt/docker/n8n/volumes/n8n
+
+- name: Render n8n docker-compose.yml from template
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/docker/n8n/docker-compose.yml
+    owner: ansible
+    group: docker
+    mode: '0600'
+  become: true
+  notify: Restart n8n compose project
+
+- name: Deploy n8n via docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/n8n/
+    files:
+      - docker-compose.yml
+    state: present
+    pull: always
+  become: true

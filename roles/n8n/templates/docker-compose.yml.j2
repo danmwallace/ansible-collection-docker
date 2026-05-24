@@ -1,0 +1,73 @@
+services:
+  n8n-app:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_HOST={{ n8n_hostname }}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - N8N_ENCRYPTION_KEY={{ n8n_encryption_key }}
+      - N8N_TRUSTED_PROXY='172.20.0.2/16, 172.19.0.6/16'
+      - N8N_RUNNERS_ENABLED=true
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://{{ n8n_hostname }}/
+      - GENERIC_TIMEZONE=UTC
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=n8n-postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD={{ n8n_postgres_password }}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy_network"
+      - "traefik.http.routers.n8n.rule=Host(`{{ n8n_hostname }}`)"
+      - "traefik.http.routers.n8n.entrypoints=websecure"
+      - "traefik.http.routers.n8n.tls.certresolver=cloudflare"
+      - "traefik.http.services.n8n.loadbalancer.server.port=5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./local-files:/files
+    networks:
+      - n8n
+      - proxy_network
+  n8n-postgres:
+    image: postgres:15
+    container_name: n8n-postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=n8n
+      - POSTGRES_PASSWORD={{ n8n_postgres_password }}
+      - POSTGRES_DB=n8n
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - n8n
+
+
+volumes:
+  n8n_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /opt/docker/n8n/volumes/n8n
+      o: bind
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /opt/docker/n8n/volumes/postgres-db
+      o: bind
+
+
+networks:
+  n8n:
+    driver: bridge
+  proxy_network:
+    external: true
+    name: proxy_network

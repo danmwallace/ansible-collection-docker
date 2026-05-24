@@ -1,0 +1,25 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy n8n workflow automation with a PostgreSQL backend behind Traefik via Docker Compose.
+    description:
+      - Creates /opt/docker/n8n with subdirectories for local files and the n8n/postgres bind-mount
+        volumes, renders a docker-compose.yml that runs n8nio/n8n alongside a postgres:15 backing
+        store, and brings the stack up via community.docker.docker_compose_v2.
+      - Joins the external proxy_network Docker network and emits Traefik labels so the n8n web UI
+        is served on the supplied hostname.
+    author:
+      - Dan Wallace
+    options:
+      n8n_hostname:
+        description: Public hostname Traefik routes to the n8n web UI; also used for N8N_HOST and WEBHOOK_URL.
+        type: str
+        required: true
+      n8n_encryption_key:
+        description: n8n credentials encryption key (N8N_ENCRYPTION_KEY). Supply from vault.
+        type: str
+        required: true
+      n8n_postgres_password:
+        description: Password for the n8n PostgreSQL user (used for both DB_POSTGRESDB_PASSWORD and POSTGRES_PASSWORD). Supply from vault.
+        type: str
+        required: true

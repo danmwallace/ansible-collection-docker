@@ -1,0 +1,53 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Stat the data and volume directories
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /opt/docker/n8n
+        - /opt/docker/n8n/local-files
+        - /opt/docker/n8n/volumes/postgres-db
+        - /opt/docker/n8n/volumes/n8n
+      register: n8n_dirs
+
+    - name: Assert directories were created with expected ownership and mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.isdir
+          - item.stat.pw_name == 'ansible'
+          - item.stat.gr_name == 'docker'
+          - item.stat.mode == '0755'
+      loop: "{{ n8n_dirs.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Stat the rendered docker-compose file
+      ansible.builtin.stat:
+        path: /opt/docker/n8n/docker-compose.yml
+      register: n8n_compose_stat
+
+    - name: Assert docker-compose file was rendered with the expected mode
+      ansible.builtin.assert:
+        that:
+          - n8n_compose_stat.stat.exists
+          - n8n_compose_stat.stat.mode == '0600'
+
+    - name: Read rendered docker-compose file
+      ansible.builtin.slurp:
+        src: /opt/docker/n8n/docker-compose.yml
+      register: n8n_compose_contents
+
+    - name: Assert template substituted hostname, encryption key, and postgres password
+      vars:
+        rendered: "{{ n8n_compose_contents.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'N8N_HOST=n8n.test.local' in rendered"
+          - "'WEBHOOK_URL=https://n8n.test.local/' in rendered"
+          - "'N8N_ENCRYPTION_KEY=test-encryption-key-not-for-production' in rendered"
+          - "'DB_POSTGRESDB_PASSWORD=test-postgres-password' in rendered"
+          - "'traefik.http.routers.n8n.rule=Host(`n8n.test.local`)' in rendered"

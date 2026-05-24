@@ -1,0 +1,10 @@
+---
+# handlers file for n8n
+
+- name: Restart n8n compose project
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/n8n/
+    files:
+      - docker-compose.yml
+    state: restarted
+  become: true
