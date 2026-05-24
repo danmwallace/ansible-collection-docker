@@ -1,0 +1,11 @@
+---
+# handlers file for librechat
+
+- name: Restart librechat
+  community.docker.docker_compose_v2:
+    project_src: "{{ librechat_install_path }}/"
+    files:
+      - docker-compose.yml
+    state: restarted
+    pull: always
+  become: false

@@ -1,0 +1,20 @@
+---
+# NOTE: This scenario can't run end-to-end inside a podman test container —
+# the role's git clone needs internet access, and docker_network/
+# docker_compose_v2 need a running Docker daemon (which the test container
+# does not have). Lint-clean is the meaningful signal here; for a real test,
+# run the role against a host with Docker and a vault file defining the full
+# vault_librechat_* set (see the role README).
+- name: Converge
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Apply librechat role with test values
+      ansible.builtin.include_role:
+        name: danmwallace.docker.librechat
+      vars:
+        librechat_hostname: librechat.test.local
+        librechat_obsidian_mount_enabled: false
+        # Minimal vault stub so template rendering doesn't trip on undefined refs
+        vault_librechat_mongo_uri: "mongodb://test-mongo:27017/test"
+        vault_librechat_vector_postgres_password: test-vector-pw

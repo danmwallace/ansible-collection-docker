@@ -1,0 +1,413 @@
+# For more information, see the Configuration Guide:
+# https://www.librechat.ai/docs/configuration/librechat_yaml
+
+# Configuration version (required)
+version: 1.3.9
+
+############################### [ UI and Interface Configuration ] #########################################################
+# For more information, see: https://www.librechat.ai/docs/configuration/librechat_yaml/object_structure/interface#overview
+interface:
+  modelSelect: true                                       # Controls the model select dropdown.
+  parameters: true                                        # Controls the parameters button and modal on the right.
+  sidePanel: true                                         # Controls the ENTIRE right-side panel.
+  presets: true                                           # Controls the presets button.
+  bookmarks: false                                        # Disabled — caused user confusion.
+  multiConvo: true                                        # Multi-conversation toggle button.
+  customWelcome: "Hello, how can I assist you today?"     # Initial welcome message.
+  runCode: true                                           # "Run Code" button in the chat input area.
+  webSearch: false                                        # Disabled — see commented webSearch block below.
+  fileSearch: true
+  fileCitations: true
+
+  # Granular permissions (replaces simple boolean form).
+  prompts:
+    use: true
+    create: true
+    share: false
+    public: false
+  agents:
+    use: true
+    create: true
+    share: false
+    public: false
+
+  peoplePicker:
+    users: true
+    groups: true
+    roles: true
+  marketplace:
+    use: true
+  mcpServers:
+    placeholder: "MCP Servers"
+    # trustCheckbox shown on user-defined MCP server creation/edit dialogs.
+    # trustCheckbox:
+    #   label:
+    #     en: "I understand and want to continue"
+    #   subLabel:
+    #     en: |
+    #       LibreChat hasn't reviewed this MCP server. Attackers may attempt to steal
+    #       your data or trick the model into unintended actions.
+
+  # Remote agents with external API support.
+  # remoteAgents:
+  #   use: false
+  #   create: false
+  #   share: false
+  #   public: false
+
+  # Temporary chat retention period in hours (default 720, min 1, max 8760).
+  # temporaryChatRetention: 720
+
+  # Privacy policy / terms of service.
+  # privacyPolicy:
+  #   externalUrl: "https://example.com/privacy"
+  #   openNewTab: true
+  # termsOfService:
+  #   externalUrl: "https://example.com/tos"
+  #   openNewTab: true
+  #   modalAcceptance: true
+  #   modalTitle: "Terms of Service"
+  #   modalContent: |
+  #     # Terms
+
+######################################### [ General Settings ] #######################################
+# Cache settings: Set to true to enable caching
+cache: true
+
+# File storage strategy. Granular form lets each file class use a different backend.
+# Available strategies: "local", "s3", "firebase", "azure_blob", "cloudfront"
+# fileStrategy: "local"
+# fileStrategy:
+#   avatar: "s3"
+#   image: "firebase"
+#   document: "local"
+
+# CloudFront CDN configuration (only used when fileStrategy includes cloudfront).
+# Requires AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME.
+# cloudfront:
+#   domain: "https://cdn.example.com"
+#   distributionId: "E1234ABCD"
+#   invalidateOnDelete: false
+#   imageSigning: "none"            # "none" or "cookies"
+#   cookieDomain: ".example.com"    # required when imageSigning: "cookies"
+#   cookieExpiry: 1800
+#   urlExpiry: 3600
+#   storageRegion: "us-east-2"
+#   includeRegionInPath: false
+
+# Cloudflare Turnstile (CAPTCHA) on registration/login.
+# turnstile:
+#   siteKey: "your-site-key"
+#   options:
+#     language: "auto"
+#     size: "normal"
+
+# Includes specific tools from both Plugins and OpenAI Assistants endpoints.
+#includedTools: ["dalle","DALLE3.js","calculator","Tavily Search"]
+#includedTools: ["google","GoogleSearch.js","dalle","DALLE3.js","calculator","Tavily Search"]
+
+# Example Registration Object Structure (optional)
+registration:
+  # Options: ['github', 'google', 'discord', 'openid', 'facebook', 'apple', 'saml']
+  socialLogins: ['openid']
+  # allowedDomains:
+  # - "example.com"
+
+# Token balance tracking (mirrors CHECK_BALANCE / START_BALANCE in env).
+# balance:
+#   enabled: false
+#   startBalance: 20000
+#   autoRefillEnabled: false
+#   refillIntervalValue: 30
+#   refillIntervalUnit: 'days'
+#   refillAmount: 10000
+
+# Transaction record persistence (forced on whenever balance.enabled is true).
+# transactions:
+#   enabled: true
+
+rateLimits:
+  fileUploads:
+    ipMax: 100
+    ipWindowInMinutes: 60
+    userMax: 50
+    userWindowInMinutes: 60
+  conversationsImport:
+    ipMax: 100
+    ipWindowInMinutes: 60
+    userMax: 50
+    userWindowInMinutes: 60
+
+######################################### [ SSRF / Network Allowlists ] #######################################
+# By default LibreChat blocks Action / MCP / custom-endpoint baseURLs targeting
+# private IP space, loopback, and .internal/.local TLDs. Add internal hosts you
+# legitimately need under `allowedAddresses` (private IPs only — public IPs are
+# rejected at config load).
+
+# actions:
+#   allowedDomains:
+#     - 'librechat.ai'
+#   allowedAddresses:
+#     - 'host.docker.internal'
+#     - '127.0.0.1'
+
+# endpoints (custom baseURL allow list — not the same `endpoints:` block below)
+# endpoints:
+#   allowedAddresses:
+#     - 'host.docker.internal'
+#     - 'localhost'
+
+# mcpSettings:
+#   allowedDomains:
+#     - 'host.docker.internal'
+#     - 'localhost'
+#   allowedAddresses:
+#     - 'host.docker.internal'
+#     - '127.0.0.1'
+
+######################################### [ Memory ] #######################################
+# Persistent user memories (https://www.librechat.ai/docs/features/memory).
+memory:
+  disabled: {{ not librechat_memory_enabled }}
+  validKeys: {{ librechat_memory_valid_keys | tojson }}
+  tokenLimit: {{ librechat_memory_token_limit }}
+  personalize: {{ librechat_memory_personalize }}
+  messageWindowSize: {{ librechat_memory_message_window_size }}
+  agent:
+    provider: "{{ librechat_memory_agent_provider }}"
+    model: "{{ librechat_memory_agent_model }}"
+    instructions: "{{ librechat_memory_agent_instructions }}"
+    model_parameters:
+      temperature: {{ librechat_memory_agent_temperature }}
+
+######################################### [ Web Search ] #######################################
+# Surfaces in the UI when interface.webSearch is true. Provider keys live in .env.
+# webSearch:
+#   searchProvider: tavily               # tavily | serper
+#   scraperProvider: firecrawl           # firecrawl | tavily
+#   tavilyApiKey: '${TAVILY_API_KEY}'
+#   serperApiKey: '${SERPER_API_KEY}'
+#   firecrawlApiKey: '${FIRECRAWL_API_KEY}'
+#   firecrawlApiUrl: '${FIRECRAWL_API_URL}'
+#   jinaApiKey: '${JINA_API_KEY}'
+#   cohereApiKey: '${COHERE_API_KEY}'
+#   searxngInstanceUrl: '${SEARXNG_INSTANCE_URL}'
+#   searxngApiKey: '${SEARXNG_API_KEY}'
+
+######################################### [ Model Specifications ] #######################################
+modelSpecs:
+  enforce: false
+  prioritize: true
+  ####################### [ Preset Models ] ################################
+  # These are configured in the "custom" section of "endpoints" below.
+  # These should not be confused with the default endpoints, defined in the .env configuration
+  # For example, "Anthropic" here is not "anthropic" defined in the .env file.
+  addedEndpoints:
+    - anthropic
+    - agents
+  list:
+    ############### [ Anthropic Preset with Web Search Enabled ] ##############
+    # Commented out until this is resolved: https://github.com/danny-avila/LibreChat/issues/10054#issuecomment-3409298329
+    ###############################################################################
+    - name: "anthropic-sonnet-search"
+      label: "Anthropic Sonnet 4.6"
+      default: true
+      description: "Anthropic’s flagship model with web search automatically enabled. The default model option from Anthropic."
+      iconURL: "anthropic"
+      # Optional grouping: nest this spec under an endpoint name (e.g. "anthropic"),
+      # or set a custom string to create a separate collapsible section.
+      # group: "anthropic"
+      # groupIcon: "anthropic"
+      preset:
+        endpoint: "anthropic"
+        model: "claude-sonnet-4-6"
+        modelLabel: "Anthropic Sonnet 4.6"
+        resendFiles: true
+        promptCache: true
+        web_search: true
+        thinking: true
+        greeting: |
+          Search the web with Anthropic's newest, most advanced Sonnet model
+
+########################################### [ Endpoints ] #######################################
+# NOTE: Previously the `agents:` block lived under `modelSpecs:` (mis-indented),
+# which silently ignored it. The schema reads agents config from `endpoints.agents`.
+endpoints:
+  agents:
+    recursionLimit: 50
+    maxRecursionLimit: 100
+    disableBuilder: false
+    # Maximum total citations to include in agent responses (default 30).
+    maxCitations: 30
+    # Maximum citations per file (default 7).
+    maxCitationsPerFile: 7
+    # Minimum relevance score for sources (default 0.45). Set 0.0 to show all.
+    minRelevanceScore: 0.45
+    capabilities:
+      #- "execute_code" # Requires code interpreter, see: https://www.librechat.ai/docs/features/agents#code-interpreter
+      #- "ocr"          # Add Azure OCR!, see: https://www.librechat.ai/docs/features/agents#file-context-using-optical-character-recognition
+      #- "web_search"   # Requires Serper of SearXNG, see: https://www.librechat.ai/docs/features/agents#web-search
+      - "deferred_tools" # New: queue tool calls for later execution
+      - "file_search"   # No pre-requisite, see: https://www.librechat.ai/docs/features/agents#file-search
+      - "actions"       # No pre-requisite, see: https://www.librechat.ai/docs/features/agents#actions
+      - "tools"         # No pre-requisite, see: https://www.librechat.ai/docs/features/agents#tools
+      - "artifacts"     # No pre-requisite, see: https://www.librechat.ai/docs/features/agents#artifacts
+      - "context"       # Upload File as Text, see: https://www.librechat.ai/docs/features/upload_as_text
+
+  # Anthropic via Google Vertex AI (mirrors ANTHROPIC_USE_VERTEX in env).
+  # anthropic:
+  #   streamRate: 20
+  #   titleModel: claude-3-5-haiku
+  #   vertex:
+  #     region: "us-east5"
+  #     # serviceKeyFile: "/path/to/service-account.json"
+  #     # projectId: "${VERTEX_PROJECT_ID}"
+  #     models:
+  #       claude-opus-4.7:
+  #         deploymentName: claude-opus-4-7
+  #       claude-sonnet-4.6:
+  #         deploymentName: claude-sonnet-4-6
+  #       claude-3.5-haiku:
+  #         deploymentName: claude-3-5-haiku@20241022
+
+  # AWS Bedrock with inference profiles + guardrails.
+  # bedrock:
+  #   models:
+  #     - "anthropic.claude-sonnet-4-6"
+  #     - "anthropic.claude-3-5-sonnet-20241022-v2:0"
+  #   inferenceProfiles:
+  #     "us.anthropic.claude-sonnet-4-6": "${BEDROCK_INFERENCE_PROFILE_CLAUDE_SONNET}"
+  #   guardrailConfig:
+  #     guardrailIdentifier: "your-guardrail-id"
+  #     guardrailVersion: "1"
+  #     trace: "enabled"
+
+######################################### [ Speech & Text-To-Speech Configuration ] #######################################
+speech:
+  stt:
+    azureOpenAI:
+      instanceName: "{{ librechat_stt_instance_name }}"
+      apiKey: "{{ vault_librechat_stt_api_key }}"
+      deploymentName: "{{ librechat_stt_deployment_name }}"
+      apiVersion: "{{ librechat_stt_api_version }}"
+  tts:
+    azureOpenAI:
+      instanceName: "{{ librechat_tts_instance_name }}"
+      apiKey: "{{ vault_librechat_tts_api_key }}"
+      deploymentName: "{{ librechat_tts_deployment_name }}"
+      apiVersion: "{{ librechat_tts_api_version }}"
+      model: 'tts-1'
+      voices: ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer']
+
+fileConfig:
+  endpoints:
+    assistants:
+      fileLimit: 20
+      fileSizeLimit: 50
+      totalSizeLimit: 50
+      supportedMimeTypes:
+       - "image/.*"                                                                       # all image types
+       - "application/vnd.openxmlformats-officedocument.wordprocessingml.document"        # .doc
+       - "application/vnd.openxmlformats-officedocument.presentationml.presentation"      # powerpoint
+       - "text/csv"                                                                       # .csv
+       - "application/msword"                                                             # ms word
+       - "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"              # excel
+       - "application/vnd.openxmlformats-officedocument.wordprocessingml.document"        # .xml
+       - "text/html"                                                                      # .html
+       - "application/json"                                                               # .json
+       - "text/markdown"                                                                  # .md / markdown
+       - "application/pdf"                                                                # pdf
+       - "text/x-python"                                                                  # python scripts
+       - "text/x-script.python"                                                           # pythom scripts
+       - "text/x-ruby"                                                                    # ruby scripts
+       - "application/x-sh"                                                               # shell script
+       - "text/x-tex"                                                                     # .text
+       - "application/typescript"                                                         # .ts
+       - "text/plain"                                                                     # .txt
+       - "application/x-yaml"                                                             # .yaml
+    openAI:
+      fileLimit: 20
+      fileSizeLimit: 50
+      supportedMimeTypes:
+       - "image/.*"                                                                       # all image types
+       - "application/vnd.openxmlformats-officedocument.wordprocessingml.document"        # .doc
+       - "application/vnd.openxmlformats-officedocument.presentationml.presentation"      # powerpoint
+       - "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"              # excel
+       - "text/csv"                                                                       # .csv
+       - "application/msword"                                                             # ms word
+       - "application/vnd.openxmlformats-officedocument.wordprocessingml.document"        # .xml
+       - "text/html"                                                                      # .html
+       - "application/json"                                                               # .json
+       - "text/markdown"                                                                  # .md / markdown
+       - "application/pdf"                                                                # pdf
+       - "text/x-python"                                                                  # python scripts
+       - "text/x-script.python"                                                           # pythom scripts
+       - "text/x-ruby"                                                                    # ruby scripts
+       - "application/x-sh"                                                               # shell script
+       - "text/x-tex"                                                                     # .text
+       - "application/typescript"                                                         # .ts
+       - "text/plain"                                                                     # .txt
+       - "application/x-yaml"                                                             # .yaml
+    default:
+      totalSizeLimit: 50
+    azureOpenAI:
+      fileLimit: 20
+      fileSizeLimit: 50
+      supportedMimeTypes:
+       - "image/.*"                                                                       # all image types
+       - "application/vnd.openxmlformats-officedocument.wordprocessingml.document"        # .doc
+       - "application/vnd.openxmlformats-officedocument.presentationml.presentation"      # powerpoint
+       - "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"              # excel
+       - "text/csv"                                                                       # .csv
+       - "application/msword"                                                             # ms word
+       - "application/vnd.openxmlformats-officedocument.wordprocessingml.document"        # .xml
+       - "text/html"                                                                      # .html
+       - "application/json"                                                               # .json
+       - "text/markdown"                                                                  # .md / markdown
+       - "application/pdf"                                                                # pdf
+       - "text/x-python"                                                                  # python scripts
+       - "text/x-script.python"                                                           # pythom scripts
+       - "text/x-ruby"                                                                    # ruby scripts
+       - "application/x-sh"                                                               # shell script
+       - "text/x-tex"                                                                     # .text
+       - "application/typescript"                                                         # .ts
+       - "text/plain"                                                                     # .txt
+       - "application/x-yaml"                                                             # .yaml
+
+  serverFileSizeLimit: 2000
+  avatarSizeLimit: 2
+
+  # Image generation size constraints (percentage OR px).
+  # imageGeneration:
+  #   percentage: 100
+  #   px: 1024
+
+  # Browser-side resize before upload (saves bandwidth, prevents server-side limits).
+  # clientImageResize:
+  #   enabled: false
+  #   maxWidth: 1900
+  #   maxHeight: 1900
+  #   quality: 0.92
+
+######################################### [ MCP Servers ] #######################################
+# Top-level MCP server definitions. The interface.mcpServers block (above)
+# only controls UI/permissions; this is where servers are actually wired up.
+mcpServers:
+  # Web browser automation
+  puppeteer:
+    command: npx
+    args:
+      - -y
+      - "@modelcontextprotocol/server-puppeteer"
+{% if librechat_obsidian_mount_enabled %}
+  mcp-obsidian:
+    command: npx
+    args:
+      - -y
+      - "mcp-obsidian"
+      - {{ librechat_obsidian_mount_path }}
+{% endif %}
+  investor:
+    command: uvx
+    args:
+      - "investor-agent"

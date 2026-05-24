@@ -1,0 +1,42 @@
+---
+# Verify that the role's structural artifacts (rendered config files) exist
+# at the expected location with the expected owner/group/mode. End-to-end
+# container health is out of scope for this scenario; see converge.yml.
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Stat the rendered config files
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /opt/docker/librechat/.env
+        - /opt/docker/librechat/docker-compose.yml
+        - /opt/docker/librechat/librechat.yaml
+      register: librechat_config_files
+
+    - name: Assert all rendered config files exist with mode 0600 owned by ansible:docker
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.mode == '0600'
+          - item.stat.pw_name == 'ansible'
+          - item.stat.gr_name == 'docker'
+      loop: "{{ librechat_config_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read rendered docker-compose.yml
+      ansible.builtin.slurp:
+        src: /opt/docker/librechat/docker-compose.yml
+      register: librechat_compose
+
+    - name: Assert docker-compose carries the configured hostname and image tags
+      vars:
+        rendered: "{{ librechat_compose.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'librechat.test.local' in rendered"
+          - "'ghcr.io/danny-avila/librechat-api' in rendered"
+          - "'getmeili/meilisearch' in rendered"
+          - "'pgvector/pgvector' in rendered"

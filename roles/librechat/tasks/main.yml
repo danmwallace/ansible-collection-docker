@@ -1,0 +1,131 @@
+---
+# tasks file for librechat
+#
+# LibreChat is cloned from upstream into librechat_install_path, then we render
+# .env, docker-compose.yml, and librechat.yaml from templates on top of the
+# clone. Setup tasks run as root (chown the install/data dirs); the rest run
+# as librechat_owner (the connecting user, which must be in the docker group).
+#
+# Refs:
+#   https://www.librechat.ai/docs/remote/docker_linux
+#   https://www.librechat.ai/docs/configuration/dotenv
+
+# --- One-time setup (runs as root) ---
+
+- name: Create LibreChat install directory
+  ansible.builtin.file:
+    path: "{{ librechat_install_path }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ librechat_owner }}"
+    group: "{{ librechat_group }}"
+  become: true
+  tags:
+    - librechat-setup
+
+# Pre-existing deployments cloned LibreChat as root; switching to
+# librechat_owner:librechat_group requires chowning the existing checkout so
+# unprivileged git/template tasks below can read and modify it.
+# librechat_data_path is excluded — its subtrees are owned by container-internal
+# users (postgres, meilisearch) and chowning them would break those containers.
+- name: Migrate existing LibreChat checkout ownership
+  ansible.builtin.shell:
+    cmd: |
+      find {{ librechat_install_path }} -mindepth 1 \
+        \( -path {{ librechat_data_path }} -prune \) -o \
+        \( ! -user {{ librechat_owner }} -o ! -group {{ librechat_group }} \) \
+        -print -exec chown -h {{ librechat_owner }}:{{ librechat_group }} {} +
+  register: librechat_chown_result
+  changed_when: librechat_chown_result.stdout | length > 0
+  become: true
+  tags:
+    - librechat-setup
+
+# --- LibreChat checkout + config render (runs as librechat_owner) ---
+
+- name: Clone LibreChat repository
+  ansible.builtin.git:
+    repo: https://github.com/danny-avila/LibreChat.git
+    dest: "{{ librechat_install_path }}/"
+    version: "{{ librechat_version }}"
+    clone: true
+    update: true
+    force: true
+  register: librechat_git_clone_result
+  failed_when:
+    - librechat_git_clone_result.failed
+    - "'Local modifications' not in librechat_git_clone_result.msg | default('')"
+  become: false
+  tags:
+    - librechat-setup
+
+# Created AFTER the git clone because librechat_data_path lives under
+# librechat_install_path and git clone requires its destination to be empty.
+- name: Create LibreChat data directory
+  ansible.builtin.file:
+    path: "{{ librechat_data_path }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ librechat_owner }}"
+    group: "{{ librechat_group }}"
+  become: true
+  tags:
+    - librechat-setup
+
+- name: Render LibreChat .env from template
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ librechat_install_path }}/.env"
+    owner: "{{ librechat_owner }}"
+    group: "{{ librechat_group }}"
+    mode: '0600'
+  become: false
+  notify: Restart librechat
+  tags:
+    - librechat-config
+
+- name: Render LibreChat docker-compose.yml from template
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ librechat_install_path }}/docker-compose.yml"
+    owner: "{{ librechat_owner }}"
+    group: "{{ librechat_group }}"
+    mode: '0600'
+  become: false
+  notify: Restart librechat
+  tags:
+    - librechat-config
+
+- name: Render LibreChat librechat.yaml from template
+  ansible.builtin.template:
+    src: librechat.yaml.j2
+    dest: "{{ librechat_install_path }}/librechat.yaml"
+    owner: "{{ librechat_owner }}"
+    group: "{{ librechat_group }}"
+    mode: '0600'
+  become: false
+  notify: Restart librechat
+  tags:
+    - librechat-config
+
+# --- Docker runtime (runs as librechat_owner via docker group) ---
+
+- name: Ensure shared proxy_network exists for docker services
+  community.docker.docker_network:
+    name: proxy_network
+    state: present
+  become: true
+  tags:
+    - librechat-setup
+    - librechat-deploy
+
+- name: Deploy LibreChat via docker compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ librechat_install_path }}/"
+    files:
+      - docker-compose.yml
+    state: present
+    pull: always
+  become: false
+  tags:
+    - librechat-deploy

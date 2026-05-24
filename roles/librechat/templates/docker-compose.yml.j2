@@ -1,0 +1,99 @@
+services:
+  api:
+    container_name: LibreChat-API
+    image: {{ librechat_api_image }}
+    ports:
+      - {{ librechat_port }}:{{ librechat_port }}
+    depends_on:
+      - rag_api
+    restart: always
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
+    environment:
+      - HOST=0.0.0.0
+      - NODE_ENV=production
+      - MONGO_URI={{ vault_librechat_mongo_uri }}
+      - MEILI_HOST=http://meilisearch:7700
+      - RAG_PORT=8000
+      - RAG_API_URL=http://rag_api:8000
+    volumes:
+      - type: bind
+        source: ./librechat.yaml
+        target: /app/librechat.yaml
+      - ./images:/app/client/public/images
+      - ./logs:/app/api/logs
+{% if librechat_obsidian_mount_enabled %}
+      - type: bind
+        source: {{ librechat_obsidian_mount_path }}
+        target: {{ librechat_obsidian_mount_path }}
+{% endif %}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy_network"
+      - "traefik.http.routers.librechat.rule=Host(`{{ librechat_hostname }}`)"
+      - "traefik.http.routers.librechat.entrypoints=websecure"
+      - "traefik.http.routers.librechat.tls.certresolver=cloudflare"
+      - "traefik.http.services.librechat.loadbalancer.server.port={{ librechat_port }}"
+    networks:
+      - proxy_network
+      - LibreChat-Network
+  meilisearch:
+    container_name: chat-meilisearch
+    image: {{ librechat_meilisearch_image }}
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - MEILI_HOST=http://meilisearch:7700
+      - MEILI_NO_ANALYTICS=true
+    volumes:
+      - {{ librechat_data_path }}/meilisearch:/meili_data
+    networks:
+      - LibreChat-Network
+  vectordb:
+    image: {{ librechat_vectordb_image }}
+    environment:
+      - POSTGRES_DB={{ librechat_vectordb_postgres_db }}
+      - POSTGRES_USER={{ librechat_vectordb_postgres_user }}
+      - POSTGRES_PASSWORD={{ vault_librechat_vector_postgres_password }}
+    restart: always
+    volumes:
+      - {{ librechat_data_path }}/vectordb:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{ librechat_vectordb_postgres_user }} -d {{ librechat_vectordb_postgres_db }}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - LibreChat-Network
+  rag_api:
+    image: {{ librechat_ragapi_image }}
+    environment:
+      - DB_HOST=vectordb
+      - RAG_PORT=8000
+      - POSTGRES_DB={{ librechat_vectordb_postgres_db }}
+      - POSTGRES_USER={{ librechat_vectordb_postgres_user }}
+      - POSTGRES_PASSWORD={{ vault_librechat_vector_postgres_password }}
+    restart: always
+    depends_on:
+      vectordb:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - LibreChat-Network
+
+volumes:
+  pgdata:
+
+networks:
+  # This network is used for LibreChat services
+  LibreChat-Network:
+    driver: bridge
+  # This network is used for AI Server services, for the external containers to communicate
+  proxy_network:
+    external: true
+    name: proxy_network

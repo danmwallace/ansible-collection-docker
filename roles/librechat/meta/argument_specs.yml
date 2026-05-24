@@ -1,0 +1,95 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy LibreChat (multi-LLM chat UI) with Meilisearch, pgvector, and a RAG sidecar behind Traefik via Docker Compose.
+    description:
+      - Clones the LibreChat repository to librechat_install_path, renders .env / docker-compose.yml /
+        librechat.yaml from templates on top of the clone, ensures the external proxy_network Docker
+        network exists, and brings the stack (API, Meilisearch, pgvector, RAG API) up via
+        community.docker.docker_compose_v2.
+      - This argument_specs covers only the core required + commonly-overridden settings. The full
+        ~200-key interface (every LLM endpoint, every UI/speech/file/memory option) is documented in
+        defaults/main.yml as the canonical reference. Any default value listed there can be overridden
+        from inventory.
+      - Secrets are kept out of defaults/main.yml and out of this spec on purpose. The .env template
+        reads them from vault_librechat_* variables the caller must supply (see README for the full
+        list of vault keys the role expects).
+    author:
+      - Dan Wallace
+    options:
+      librechat_hostname:
+        description: Public hostname Traefik routes to the LibreChat UI.
+        type: str
+        required: true
+      librechat_version:
+        description: Git ref (tag or branch) of danny-avila/LibreChat to clone. "main" tracks upstream HEAD; pin to a release tag for reproducibility.
+        type: str
+        required: false
+        default: main
+      librechat_install_path:
+        description: Filesystem location of the LibreChat checkout. All rendered config files live here.
+        type: path
+        required: false
+        default: /opt/docker/librechat
+      librechat_data_path:
+        description: >-
+          Subdirectory under librechat_install_path used for persistent container volumes
+          (postgres, meilisearch, etc.). Excluded from the ownership-migration find.
+        type: path
+        required: false
+        default: /opt/docker/librechat/data
+      librechat_owner:
+        description: User that owns the LibreChat checkout and config files. Must be a member of the docker group on the target host.
+        type: str
+        required: false
+        default: ansible
+      librechat_group:
+        description: Group that owns the LibreChat checkout and config files. Typically docker so the owner can talk to the Docker socket.
+        type: str
+        required: false
+        default: docker
+      librechat_port:
+        description: Container port the LibreChat API listens on; also published on the Traefik service.
+        type: int
+        required: false
+        default: 3080
+      librechat_api_image:
+        description: Image tag for the LibreChat API container.
+        type: str
+        required: false
+        default: ghcr.io/danny-avila/librechat-api:latest
+      librechat_meilisearch_image:
+        description: Image tag for the Meilisearch container.
+        type: str
+        required: false
+        default: getmeili/meilisearch:v1.12.3
+      librechat_vectordb_image:
+        description: Image tag for the pgvector PostgreSQL container used by the RAG sidecar.
+        type: str
+        required: false
+        default: pgvector/pgvector:0.8.0-pg15-trixie
+      librechat_ragapi_image:
+        description: Image tag for the LibreChat RAG API sidecar.
+        type: str
+        required: false
+        default: ghcr.io/danny-avila/librechat-rag-api-dev-lite:latest
+      librechat_vectordb_postgres_db:
+        description: PostgreSQL database name used by the pgvector container.
+        type: str
+        required: false
+        default: librechat
+      librechat_vectordb_postgres_user:
+        description: PostgreSQL user used by the pgvector container.
+        type: str
+        required: false
+        default: librechat
+      librechat_obsidian_mount_enabled:
+        description: Whether to bind-mount an Obsidian vault into the container and register an mcp-obsidian server in librechat.yaml.
+        type: bool
+        required: false
+        default: true
+      librechat_obsidian_mount_path:
+        description: Host path of the Obsidian vault to bind-mount when librechat_obsidian_mount_enabled is true.
+        type: path
+        required: false
+        default: /opt/syncthing/obsidian
