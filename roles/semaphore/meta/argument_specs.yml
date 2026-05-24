@@ -1,0 +1,59 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy Semaphore UI for Ansible automation with a PostgreSQL backend behind Traefik via Docker Compose.
+    description:
+      - Renders a docker-compose.yml under /opt/docker/semaphore that runs semaphoreui/semaphore
+        alongside a postgres container, and brings the stack up via community.docker.docker_compose_v2.
+      - Joins the external proxy_network Docker network and emits Traefik labels so the Semaphore
+        web UI is served on the supplied hostname (port 3000 inside the container).
+    author:
+      - Dan Wallace
+    options:
+      semaphore_hostname:
+        description: Public hostname Traefik routes to the Semaphore web UI.
+        type: str
+        required: true
+      semaphore_postgres_password:
+        description: Password for the Semaphore PostgreSQL user. Supply from vault.
+        type: str
+        required: true
+      semaphore_admin_password:
+        description: Initial Semaphore admin password. Supply from vault.
+        type: str
+        required: true
+      semaphore_version:
+        description: Image tag for semaphoreui/semaphore.
+        type: str
+        required: false
+        default: v2.16.47
+      semaphore_postgres_user:
+        description: PostgreSQL user used by Semaphore.
+        type: str
+        required: false
+        default: semaphore
+      semaphore_postgres_db:
+        description: PostgreSQL database used by Semaphore.
+        type: str
+        required: false
+        default: semaphore
+      semaphore_admin:
+        description: Semaphore admin login name.
+        type: str
+        required: false
+        default: admin
+      semaphore_admin_name:
+        description: Display name for the Semaphore admin account.
+        type: str
+        required: false
+        default: Admin
+      semaphore_admin_email:
+        description: Email address for the Semaphore admin account.
+        type: str
+        required: false
+        default: admin@localhost
+      semaphore_ansible_host_key_checking:
+        description: Value passed through to the container's ANSIBLE_HOST_KEY_CHECKING. String, not bool ("true"/"false").
+        type: str
+        required: false
+        default: "false"

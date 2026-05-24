@@ -1,0 +1,12 @@
+---
+# defaults file for semaphore
+
+semaphore_version: v2.16.47
+
+semaphore_postgres_user: semaphore
+semaphore_postgres_db: semaphore
+
+semaphore_admin: admin
+semaphore_admin_name: Admin
+semaphore_admin_email: admin@localhost
+semaphore_ansible_host_key_checking: "false"

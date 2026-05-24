@@ -1,0 +1,10 @@
+---
+# handlers file for semaphore
+
+- name: Restart semaphore compose project
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/semaphore/
+    files:
+      - docker-compose.yml
+    state: restarted
+  become: true

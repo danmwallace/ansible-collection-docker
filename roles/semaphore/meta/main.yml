@@ -1,0 +1,27 @@
+---
+# SPDX-License-Identifier: MIT
+galaxy_info:
+  role_name: semaphore
+  namespace: danmwallace
+  author: Dan Wallace
+  description: Deploy Semaphore UI for Ansible automation with a PostgreSQL backend behind Traefik via Docker Compose.
+  license: MIT
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - docker
+    - semaphore
+    - ansible
+    - automation
+    - ci
+    - postgres
+    - traefik
+
+dependencies: []

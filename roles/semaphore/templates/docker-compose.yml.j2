@@ -1,0 +1,51 @@
+services:
+  semaphore_db:
+    image: postgres
+    environment:
+      POSTGRES_USER: {{ semaphore_postgres_user }}
+      POSTGRES_PASSWORD: {{ semaphore_postgres_password }}
+      POSTGRES_DB: {{ semaphore_postgres_db }}
+    volumes:
+      - semaphore_postgres:/var/lib/postgresql
+    networks:
+      - semaphore_network
+  semaphore:
+    image: semaphoreui/semaphore:{{ semaphore_version }}
+    environment:
+      SEMAPHORE_DB_DIALECT: postgres
+      SEMAPHORE_DB_HOST: semaphore_db
+      SEMAPHORE_DB_NAME: {{ semaphore_postgres_db }}
+      SEMAPHORE_DB_USER: {{ semaphore_postgres_user }}
+      SEMAPHORE_DB_PASS: {{ semaphore_postgres_password }}
+      SEMAPHORE_ADMIN: {{ semaphore_admin }}
+      SEMAPHORE_ADMIN_PASSWORD: {{ semaphore_admin_password }}
+      SEMAPHORE_ADMIN_NAME: {{ semaphore_admin_name }}
+      SEMAPHORE_ADMIN_EMAIL: {{ semaphore_admin_email }}
+      ANSIBLE_HOST_KEY_CHECKING: {{ semaphore_ansible_host_key_checking }}
+    volumes:
+      - semaphore_data:/var/lib/semaphore
+      - semaphore_config:/etc/semaphore
+    networks:
+      - semaphore_network
+      - proxy_network
+    depends_on:
+      - semaphore_db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy_network"
+      - "traefik.http.routers.semaphore.rule=Host(`{{ semaphore_hostname }}`)"
+      - "traefik.http.routers.semaphore.entrypoints=websecure"
+      - "traefik.http.routers.semaphore.tls.certresolver=cloudflare"
+      - "traefik.http.services.semaphore.loadbalancer.server.port=3000"
+
+volumes:
+  semaphore_data:
+  semaphore_config:
+  semaphore_postgres:
+
+networks:
+  semaphore_network:
+    driver: "bridge"
+  proxy_network:
+    external: true
+    name: proxy_network

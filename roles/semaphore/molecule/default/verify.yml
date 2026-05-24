@@ -1,0 +1,30 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Stat the rendered docker-compose file
+      ansible.builtin.stat:
+        path: /opt/docker/semaphore/docker-compose.yml
+      register: semaphore_compose_stat
+
+    - name: Assert docker-compose file was rendered
+      ansible.builtin.assert:
+        that:
+          - semaphore_compose_stat.stat.exists
+          - semaphore_compose_stat.stat.mode == '0600'
+
+    - name: Read rendered docker-compose file
+      ansible.builtin.slurp:
+        src: /opt/docker/semaphore/docker-compose.yml
+      register: semaphore_compose_contents
+
+    - name: Assert template substituted hostname, version, admin password, and postgres password
+      vars:
+        rendered: "{{ semaphore_compose_contents.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'semaphoreui/semaphore:v2.16.47' in rendered"
+          - "'SEMAPHORE_DB_PASS: test-postgres-pw' in rendered"
+          - "'SEMAPHORE_ADMIN_PASSWORD: test-admin-pw' in rendered"
+          - "'traefik.http.routers.semaphore.rule=Host(`semaphore.test.local`)' in rendered"
