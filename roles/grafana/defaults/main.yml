@@ -1,5 +1,5 @@
 ---
-# SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT
 # defaults file for grafana
 
 grafana_server_root_url: "https://{{ grafana_hostname }}"

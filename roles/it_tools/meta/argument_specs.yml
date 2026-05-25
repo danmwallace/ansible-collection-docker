@@ -1,0 +1,17 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy IT-Tools developer utility suite in Docker behind Traefik via Docker Compose.
+    description:
+      - Creates /opt/docker/it-tools/data owned by ansible:docker, renders a docker-compose.yml that runs corentinth/it-tools:latest on the
+        external proxy_network, stops any running stack, and brings it back up with community.docker.docker_compose_v2.
+      - The web UI is routed by Traefik on the supplied hostname over the websecure entrypoint, and is also published directly on host port 8079
+        for LAN access.
+    author:
+      - Dan Wallace
+    options:
+      it_tools_hostname:
+        description: Public hostname Traefik routes to the IT-Tools web UI.
+        type: str
+        required: false
+        default: it-tools.example.com

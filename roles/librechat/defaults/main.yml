@@ -1,11 +1,17 @@
 ---
 # ######################################################################
-# defaults for ansible_docker_librechat
+# defaults file for librechat
 #
 # These are fallback values. Real values should be set in the consuming
 # inventory (group_vars/librechat/*.yml). Variables are prefixed with
 # `librechat_` to avoid collisions with other roles and to keep the
 # namespace consistent with the consuming playbook.
+#
+# NOTE: LibreChat's .env surface changes frequently upstream. This file and
+# templates/env.j2 are a snapshot, not a live mirror. Review the official
+# reference before changing settings: https://www.librechat.ai/docs/configuration/dotenv
+# To add/track options this role doesn't expose, fork the collection and edit
+# this file plus templates/env.j2 to match your LibreChat version.
 #
 # Secrets are expected under the `vault_librechat_` prefix in vault.yml
 # and are referenced directly in the templates — they are not

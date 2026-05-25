@@ -1,5 +1,5 @@
 ---
-# SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT
 # defaults file for unifi
 # Reference: https://docs.linuxserver.io/images/docker-unifi-network-application/#setting-up-your-external-database
 

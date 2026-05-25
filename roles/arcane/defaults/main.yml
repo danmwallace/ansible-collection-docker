@@ -1,5 +1,5 @@
 ---
-# SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT
 # defaults file for arcane
 
 arcane_version: latest

@@ -22,6 +22,8 @@ The role joins the external `proxy_network` Docker network for Traefik routing a
 
 The role exposes ~200 settings via `defaults/main.yml` — every LLM endpoint, every UI toggle, every speech/file/memory/email/OAuth/RAG/redis/MCP option that LibreChat's `.env` supports. The full list is documented inline in `defaults/main.yml` and serves as the canonical reference; the table below covers only the core required + commonly-overridden settings.
 
+> **LibreChat's `.env` options change frequently** — upstream adds, renames, and removes settings release to release. This role's `defaults/main.yml` and `templates/env.j2` capture a *snapshot* of that surface, not a live mirror, so treat them as a starting point rather than an authoritative contract. Before relying on or changing any setting, review the official [LibreChat `.env` reference](https://www.librechat.ai/docs/configuration/dotenv). If you need an option this role doesn't expose yet, or upstream has changed one, the intended path is to **fork the collection and edit `defaults/main.yml` and `templates/env.j2`** to match the version of LibreChat you're running.
+
 | Variable | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `librechat_hostname` | str | yes | — | Public hostname Traefik routes to the LibreChat UI. |

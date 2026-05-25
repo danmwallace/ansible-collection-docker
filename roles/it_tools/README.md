@@ -1,115 +1,61 @@
-# Ansible Role: ansible_docker_it_tools
+# danmwallace.docker.it_tools
 
-Deploy IT-Tools, a collection of useful IT utilities in a web interface.
-
-## Description
-
-This role deploys [IT-Tools](https://it-tools.tech/), a collection of handy tools for developers and IT professionals. IT-Tools provides a web-based interface for common tasks like encoding/decoding, hashing, text manipulation, and more.
+Deploys [IT-Tools](https://it-tools.tech/) — a browser-based collection of developer
+and sysadmin utilities (encoders/decoders, hash and crypto helpers, network
+calculators, converters, generators) — as a Docker Compose stack under
+`/opt/docker/it-tools`. The container (`corentinth/it-tools:latest`) joins the
+external `proxy_network` and is exposed through Traefik on the configured hostname
+over the `websecure` (443) entrypoint with the `cloudflare` cert resolver. The
+compose file also publishes the UI directly on host port `8079` for LAN access.
 
 ## Requirements
 
-- Ansible 2.15+
-- Target OS: Ubuntu 20.04+, Debian 11+
-- Docker and Docker Compose installed
-- `community.docker` collection
+- Ansible >= 2.16
+- `community.docker` collection on the controller
+- Target host with Docker (or a Docker-compatible runtime) installed
+- An external Docker network named `proxy_network` (typically provisioned by the
+  Traefik role)
 
 ## Role Variables
 
-### Required Variables
-
-```yaml
-# IT-Tools web interface hostname
-ittools_hostname: "tools.example.com"
-```
-
-### Optional Variables
-
-```yaml
-# Docker image version
-ittools_docker_image: "corentinth/it-tools:latest"
-
-# Port mapping
-ittools_port: 80
-```
+| Variable | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `it_tools_hostname` | str | no | `it-tools.example.com` | Public hostname Traefik routes to the IT-Tools web UI. Override per host. |
 
 ## Dependencies
 
-- `ansible_docker` - Base docker deployment pattern
+None declared in `meta/main.yml`. In practice the target host needs Docker and an
+external `proxy_network` (typically from the Traefik role).
 
 ## Example Playbook
 
 ```yaml
----
-- name: Deploy IT-Tools
-  hosts: utility_servers
+- hosts: utility_servers
   become: true
   roles:
-    - ansible_common
-    - ansible_docker_it_tools
+    - role: danmwallace.docker.it_tools
+      vars:
+        it_tools_hostname: tools.example.com
 ```
 
-## What This Role Does
+## What the Role Does
 
-1. Creates IT-Tools directory
-2. Deploys IT-Tools via Docker Compose
-3. Starts IT-Tools container
+1. Ensures `/opt/docker/it-tools/data` exists (0755).
+2. Renders `docker-compose.yml` to `/opt/docker/it-tools/` (0600).
+3. Stops the compose project if it is already running (`state: absent`).
+4. Brings the IT-Tools stack up via `community.docker.docker_compose_v2`.
 
-## Available Tools
+## Notes
 
-IT-Tools includes utilities for:
-
-### Encoders/Decoders
-- Base64 encode/decode
-- URL encode/decode
-- HTML entities
-- JWT decoder
-
-### Hash & Crypto
-- MD5, SHA-1, SHA-256, SHA-512
-- HMAC generator
-- Password generator
-- UUID generator
-
-### Text Manipulation
-- Text diff
-- Case converter
-- String utilities
-- Markdown preview
-
-### Network Tools
-- IP subnet calculator
-- MAC address lookup
-- Port scanner info
-
-### Converters
-- JSON to YAML
-- XML formatter
-- SQL formatter
-- Color converter
-
-### And More
-- QR code generator
-- Cron expression parser
-- Docker run to compose
-- Many others!
-
-## Tags
-
-- `it-tools` - IT-Tools tasks
-- `utilities` - Utility tasks
-
-## Access
-
-Navigate to `https://{ittools_hostname}` to access the tool collection.
-
-## Privacy
-
-IT-Tools runs entirely client-side - all processing happens in your browser. No data is sent to external servers.
+- The role has no `handlers/main.yml`; instead of notifying a restart handler on a
+  config change, every run tears the stack down (step 3) and brings it back up
+  (step 4). The teardown task uses `ignore_errors: true` and is not idempotent — it
+  reports a change on each run and causes a brief restart even when nothing changed.
+  This deviates from the collection's notify-on-change compose pattern.
+- IT-Tools processes everything client-side in the browser; no data leaves the host.
+- The compose template hardcodes the `corentinth/it-tools:latest` image tag and the
+  `8079:80` host port mapping — neither is currently exposed as a role variable.
 
 ## License
 
 MIT
-
-## Author
-
-Dan Wallace
