@@ -2,9 +2,16 @@
 # tasks file for librechat
 #
 # LibreChat is cloned from upstream into librechat_install_path, then we render
-# .env, docker-compose.yml, and librechat.yaml from templates on top of the
-# clone. Setup tasks run as root (chown the install/data dirs); the rest run
+# .env, docker-compose.ansible.yml, and librechat.yaml from templates on top of
+# the clone. Setup tasks run as root (chown the install/data dirs); the rest run
 # as librechat_owner (the connecting user, which must be in the docker group).
+#
+# The compose file is rendered to docker-compose.ansible.yml — NOT the upstream
+# docker-compose.yml, which LibreChat tracks in git. Writing over a tracked file
+# means the next `git ... force: true` reverts it, re-rendering churns it back,
+# and the handler restarts the stack on every converge. Rendering to an
+# untracked filename leaves upstream's tree pristine, so the clone stays
+# idempotent while we still auto-track main.
 #
 # Refs:
 #   https://www.librechat.ai/docs/remote/docker_linux
@@ -26,13 +33,18 @@
 # Pre-existing deployments cloned LibreChat as root; switching to
 # librechat_owner:librechat_group requires chowning the existing checkout so
 # unprivileged git/template tasks below can read and modify it.
-# librechat_data_path is excluded — its subtrees are owned by container-internal
-# users (postgres, meilisearch) and chowning them would break those containers.
+# Two paths are pruned from the sweep:
+#   - librechat_data_path: its subtrees are owned by container-internal users
+#     (postgres, meilisearch); chowning them would break those containers.
+#   - .git: the git module rewrites HEAD/index on every fetch, creating them
+#     with the connecting user's primary group (not librechat_group). Sweeping
+#     them would re-chown 2 files every converge — pure churn — and git
+#     internals don't need the ansible:docker convention to function.
 - name: Migrate existing LibreChat checkout ownership
   ansible.builtin.shell:
     cmd: |
       find {{ librechat_install_path }} -mindepth 1 \
-        \( -path {{ librechat_data_path }} -prune \) -o \
+        \( -path {{ librechat_data_path }} -o -path {{ librechat_install_path }}/.git \) -prune -o \
         \( ! -user {{ librechat_owner }} -o ! -group {{ librechat_group }} \) \
         -print -exec chown -h {{ librechat_owner }}:{{ librechat_group }} {} +
   register: librechat_chown_result
@@ -84,10 +96,10 @@
   tags:
     - librechat-config
 
-- name: Render LibreChat docker-compose.yml from template
+- name: Render LibreChat docker-compose.ansible.yml from template
   ansible.builtin.template:
     src: docker-compose.yml.j2
-    dest: "{{ librechat_install_path }}/docker-compose.yml"
+    dest: "{{ librechat_install_path }}/docker-compose.ansible.yml"
     owner: "{{ librechat_owner }}"
     group: "{{ librechat_group }}"
     mode: "0600"
@@ -123,7 +135,7 @@
   community.docker.docker_compose_v2:
     project_src: "{{ librechat_install_path }}/"
     files:
-      - docker-compose.yml
+      - docker-compose.ansible.yml
     state: present
     pull: always
   become: false

@@ -3,9 +3,9 @@ argument_specs:
   main:
     short_description: Deploy LibreChat (multi-LLM chat UI) with Meilisearch, pgvector, and a RAG sidecar behind Traefik via Docker Compose.
     description:
-      - Clones the LibreChat repository to librechat_install_path, renders .env / docker-compose.yml / librechat.yaml from templates on top of the clone,
-        ensures the external proxy_network Docker network exists, and brings the stack (API, Meilisearch, pgvector, RAG API) up via
-        community.docker.docker_compose_v2.
+      - Clones the LibreChat repository to librechat_install_path, renders .env / docker-compose.ansible.yml / librechat.yaml
+        from templates on top of the clone, ensures the external proxy_network Docker network exists, and brings the stack
+        (API, Meilisearch, pgvector, RAG API) up via community.docker.docker_compose_v2.
       - This argument_specs covers only the core required + commonly-overridden settings. The full ~200-key interface (every LLM endpoint, every
         UI/speech/file/memory option) is documented in defaults/main.yml as the canonical reference. Any default value listed there can be overridden from
         inventory.

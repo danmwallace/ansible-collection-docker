@@ -11,7 +11,7 @@
         path: "{{ item }}"
       loop:
         - /opt/docker/librechat/.env
-        - /opt/docker/librechat/docker-compose.yml
+        - /opt/docker/librechat/docker-compose.ansible.yml
         - /opt/docker/librechat/librechat.yaml
       register: librechat_config_files
 
@@ -26,9 +26,9 @@
       loop_control:
         label: "{{ item.item }}"
 
-    - name: Read rendered docker-compose.yml
+    - name: Read rendered docker-compose.ansible.yml
       ansible.builtin.slurp:
-        src: /opt/docker/librechat/docker-compose.yml
+        src: /opt/docker/librechat/docker-compose.ansible.yml
       register: librechat_compose
 
     - name: Assert docker-compose carries the configured hostname and image tags
