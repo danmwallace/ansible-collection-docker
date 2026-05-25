@@ -1,0 +1,120 @@
+---
+# tasks file for common
+
+- name: Set hostname from inventory
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+  become: true
+
+# --- Package installation ---
+
+- name: Install baseline packages on Debian/Ubuntu
+  ansible.builtin.package:
+    name: "{{ common_packages_debian }}"
+    state: present
+    update_cache: true
+  become: true
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Install qemu-guest-agent on Debian/Ubuntu QEMU VMs
+  ansible.builtin.package:
+    name: qemu-guest-agent
+    state: present
+  become: true
+  when:
+    - ansible_facts['os_family'] == "Debian"
+    - ansible_facts['virtualization_type'] == "kvm"
+
+- name: Detect Fedora variant_id from /etc/os-release
+  ansible.builtin.command:
+    cmd: awk -F= '/^VARIANT_ID=/ { gsub(/"/, "", $2); print $2 }' /etc/os-release
+  register: common_variant_id
+  changed_when: false
+  when: ansible_facts['distribution'] == "Fedora"
+
+- name: Install baseline packages on Fedora Atomic variants
+  community.general.rpm_ostree_pkg:
+    name: "{{ common_packages_fedora }}"
+    state: present
+  become: true
+  when:
+    - ansible_facts['distribution'] == "Fedora"
+    - common_variant_id.stdout in ['iot', 'coreos', 'silverblue', 'kinoite']
+
+- name: Install qemu-guest-agent on Fedora Atomic QEMU VMs
+  community.general.rpm_ostree_pkg:
+    name: qemu-guest-agent
+    state: present
+  become: true
+  when:
+    - ansible_facts['distribution'] == "Fedora"
+    - common_variant_id.stdout in ['iot', 'coreos', 'silverblue', 'kinoite']
+    - ansible_facts['virtualization_type'] == "kvm"
+
+- name: Install baseline packages on Fedora Server
+  ansible.builtin.dnf:
+    name: "{{ common_packages_fedora }}"
+    state: present
+  become: true
+  when:
+    - ansible_facts['distribution'] == "Fedora"
+    - common_variant_id.stdout not in ['iot', 'coreos', 'silverblue', 'kinoite']
+
+- name: Install qemu-guest-agent on Fedora Server QEMU VMs
+  ansible.builtin.dnf:
+    name: qemu-guest-agent
+    state: present
+  become: true
+  when:
+    - ansible_facts['distribution'] == "Fedora"
+    - common_variant_id.stdout not in ['iot', 'coreos', 'silverblue', 'kinoite']
+    - ansible_facts['virtualization_type'] == "kvm"
+
+# --- System ---
+
+- name: Set system timezone
+  community.general.timezone:
+    name: "{{ common_timezone }}"
+  become: true
+
+# --- Users ---
+
+- name: Create user accounts (Ubuntu/Debian — sudo group)
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: sudo
+    append: true
+    state: present
+    shell: /bin/bash
+  loop: "{{ common_users }}"
+  become: true
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Create user accounts (Fedora — wheel group)
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: wheel
+    append: true
+    state: present
+    shell: /bin/bash
+  loop: "{{ common_users }}"
+  become: true
+  when: ansible_facts['distribution'] == "Fedora"
+
+- name: Install authorized_keys for created users
+  ansible.posix.authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ item.ssh_key }}"
+    state: present
+  loop: "{{ common_users }}"
+  become: true
+
+- name: Grant the ansible user passwordless sudo
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/ansible
+    content: "ansible ALL=(ALL) NOPASSWD:ALL\n"
+    mode: "0440"
+    owner: root
+    group: root
+    validate: "visudo -cf %s"
+  become: true

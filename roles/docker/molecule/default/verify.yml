@@ -1,0 +1,64 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Stat the docker apt signing key
+      ansible.builtin.stat:
+        path: /etc/apt/keyrings/docker.asc
+      register: docker_key
+
+    - name: Assert the docker apt signing key was fetched
+      ansible.builtin.assert:
+        that:
+          - docker_key.stat.exists
+          - docker_key.stat.size > 0
+
+    - name: Stat the docker apt source list
+      ansible.builtin.stat:
+        path: /etc/apt/sources.list.d/docker.list
+      register: docker_sources
+
+    - name: Assert the docker apt repo file was registered
+      ansible.builtin.assert:
+        that:
+          - docker_sources.stat.exists
+
+    - name: Read docker apt source list
+      ansible.builtin.slurp:
+        src: /etc/apt/sources.list.d/docker.list
+      register: docker_sources_contents
+
+    - name: Assert the apt source line references the docker CDN and signing key
+      vars:
+        line: "{{ docker_sources_contents.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'download.docker.com/linux/ubuntu' in line"
+          - "'signed-by=/etc/apt/keyrings/docker.asc' in line"
+
+    - name: Look up the docker group
+      ansible.builtin.getent:
+        database: group
+        key: docker
+
+    - name: Assert the docker group exists
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.getent_group['docker'] is defined
+
+    - name: Look up the ansible user
+      ansible.builtin.getent:
+        database: passwd
+        key: ansible
+
+    - name: Read ansible user group membership
+      ansible.builtin.command:
+        cmd: id -nG ansible
+      register: docker_ansible_groups
+      changed_when: false
+
+    - name: Assert ansible user is in the docker group
+      ansible.builtin.assert:
+        that:
+          - "'docker' in docker_ansible_groups.stdout.split()"

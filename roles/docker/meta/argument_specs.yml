@@ -1,0 +1,23 @@
+---
+argument_specs:
+  main:
+    short_description: Install Docker CE and the compose plugin on Debian, Ubuntu, and Fedora (Server and Atomic).
+    description:
+      - On Debian/Ubuntu, adds the Docker apt signing key under /etc/apt/keyrings, registers the Docker apt repository, removes distro-provided
+        docker.io/docker-compose/podman-docker packages that conflict, then installs docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, and
+        docker-compose-plugin.
+      - On Fedora, drops Docker's docker-ce.repo into /etc/yum.repos.d, detects whether the host is a Fedora Atomic variant (IoT/CoreOS/Silverblue/Kinoite), and
+        installs Docker via rpm-ostree on Atomic or dnf on Server.
+      - Finally ensures a docker group exists and adds the ansible user to it.
+    author:
+      - Dan Wallace
+    options:
+      docker_fedora_packages:
+        description: Packages installed via dnf on Fedora Server. Tweak to add/remove components (e.g. docker-buildx-plugin).
+        type: list
+        elements: str
+        required: false
+        default:
+          - docker-ce
+          - docker-compose-plugin
+          - containerd.io

@@ -1,5 +1,6 @@
-#SPDX-License-Identifier: MIT-0
-### REQUIRED
+---
+# SPDX-License-Identifier: MIT-0
+# ## REQUIRED
 # The namespace of the collection. This can be a company/brand/organization or product namespace under which all
 # content lives. May only contain alphanumeric lowercase characters and underscores. Namespaces cannot start with
 # underscores or numbers and cannot contain consecutive underscores
@@ -9,7 +10,7 @@ namespace: danmwallace
 name: docker
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.0.0
+version: 1.1.0
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -34,8 +35,7 @@ license_file: ""
 
 # A list of tags you want to associate with the collection for indexing/searching. A tag name has the same character
 # requirements as 'namespace' and 'name'
-tags: ["docker", "homelab", "smb"]
-
+tags: ["docker", "homelab", "smb", "infrastructure"]
 # Collections that this collection requires to be installed for it to be usable. The key of the dict is the
 # collection label 'namespace.name'. The value is a version range
 # L(specifiers,https://python-semanticversion.readthedocs.io/en/latest/#requirement-specification). Multiple version
@@ -59,7 +59,19 @@ issues: https://github.com/danmwallace/ansible-collection-docker/issues
 # artifact. A pattern is matched from the relative path of the file or directory of the collection directory. This
 # uses 'fnmatch' to match the files or directories. Some directories and files like 'galaxy.yml', '*.pyc', '*.retry',
 # and '.git' are always filtered. Mutually exclusive with 'manifest'
-build_ignore: []
+build_ignore:
+  - .github
+  - molecule
+  - "*.tar.gz"
+  - .ansible-lint
+  - .yamllint
+  - TODO.md
+  - .venv
+  - .ansible
+  - .vscode
+  - .claude
+  - roles/*/tests
+  - tests
 
 # A dict controlling use of manifest directives used in building the collection artifact. The key 'directives' is a
 # list of MANIFEST.in style

@@ -1,0 +1,53 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Stat the rendered files
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /opt/docker/traefik/docker-compose.yml
+        - /opt/docker/traefik/traefik.yml
+        - /opt/docker/traefik/dynamic_conf.yml
+        - /opt/docker/traefik/acme.json
+      register: traefik_files
+
+    - name: Assert all rendered files exist with mode 0600 owned by ansible:docker
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.mode == '0600'
+          - item.stat.pw_name == 'ansible'
+          - item.stat.gr_name == 'docker'
+      loop: "{{ traefik_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read rendered docker-compose.yml
+      ansible.builtin.slurp:
+        src: /opt/docker/traefik/docker-compose.yml
+      register: traefik_compose
+
+    - name: Assert docker-compose rendered hostname, cloudflare creds, and image tag
+      vars:
+        rendered: "{{ traefik_compose.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'image: traefik:v3.6.2' in rendered"
+          - "'CF_API_EMAIL=test@test.local' in rendered"
+          - "'CF_DNS_API_TOKEN=test-cloudflare-token' in rendered"
+          - "'traefik.http.routers.traefik.rule=Host(`traefik.test.local`)' in rendered"
+
+    - name: Read rendered traefik.yml
+      ansible.builtin.slurp:
+        src: /opt/docker/traefik/traefik.yml
+      register: traefik_static
+
+    - name: Assert traefik.yml carries the cloudflare ACME email and resolver
+      vars:
+        rendered: "{{ traefik_static.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'email: \"test@test.local\"' in rendered"
+          - "'provider: cloudflare' in rendered"

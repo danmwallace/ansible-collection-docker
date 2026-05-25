@@ -1,0 +1,30 @@
+---
+# SPDX-License-Identifier: MIT
+galaxy_info:
+  role_name: common
+  namespace: danmwallace
+  author: Dan Wallace
+  description: Baseline system configuration — hostname, packages, timezone, users, sudoers — for homelab hosts.
+  license: MIT
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+    - name: Fedora
+      versions:
+        - all
+  galaxy_tags:
+    - baseline
+    - common
+    - homelab
+    - hostname
+    - users
+    - sudoers
+    - timezone
+
+dependencies: []

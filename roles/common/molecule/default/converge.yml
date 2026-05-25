@@ -1,0 +1,17 @@
+---
+- name: Converge
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Apply common role with test values
+      ansible.builtin.include_role:
+        name: danmwallace.docker.common
+      vars:
+        common_timezone: "Etc/UTC"
+        common_packages_debian:
+          - ca-certificates
+          - curl
+          - git
+        common_users:
+          - name: testuser
+            ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAtest molecule-test"

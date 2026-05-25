@@ -1,0 +1,28 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy Traefik reverse proxy with automatic SSL via Let's Encrypt and Cloudflare DNS-01.
+    description:
+      - Renders Traefik's docker-compose.yml plus static (traefik.yml) and dynamic (dynamic_conf.yml) configuration into /opt/docker/traefik, creates the
+        external proxy_network Docker network, touches acme.json with 0600 permissions, and brings the stack up with docker_compose_v2.
+      - Configures the cloudflare ACME resolver for DNS-01 wildcard certs; the Traefik dashboard is exposed via a Traefik router on the supplied hostname.
+    author:
+      - Dan Wallace
+    options:
+      traefik_hostname:
+        description: Public hostname Traefik routes to its own dashboard (api@internal).
+        type: str
+        required: true
+      traefik_cloudflare_api_token:
+        description: Cloudflare API token with Zone.DNS edit rights, used for the DNS-01 challenge. Supply from vault.
+        type: str
+        required: true
+      traefik_cloudflare_email:
+        description: Email address Let's Encrypt associates with issued certificates and Cloudflare's CF_API_EMAIL.
+        type: str
+        required: true
+      traefik_version:
+        description: Image tag for the traefik image.
+        type: str
+        required: false
+        default: v3.6.2

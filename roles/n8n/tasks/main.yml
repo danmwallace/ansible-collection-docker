@@ -7,7 +7,7 @@
     state: directory
     owner: ansible
     group: docker
-    mode: '0755'
+    mode: "0755"
   become: true
   loop:
     - /opt/docker/n8n
@@ -21,7 +21,7 @@
     dest: /opt/docker/n8n/docker-compose.yml
     owner: ansible
     group: docker
-    mode: '0600'
+    mode: "0600"
   become: true
   notify: Restart n8n compose project
 

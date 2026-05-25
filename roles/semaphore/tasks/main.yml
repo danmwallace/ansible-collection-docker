@@ -5,14 +5,14 @@
   ansible.builtin.file:
     path: /opt/docker/semaphore
     state: directory
-    mode: '0755'
+    mode: "0755"
   become: true
 
 - name: Render semaphore docker-compose.yml from template
   ansible.builtin.template:
     src: docker-compose.yml.j2
     dest: /opt/docker/semaphore/docker-compose.yml
-    mode: '0600'
+    mode: "0600"
   become: true
   notify: Restart semaphore compose project
 

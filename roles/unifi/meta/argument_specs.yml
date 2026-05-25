@@ -3,14 +3,12 @@ argument_specs:
   main:
     short_description: Deploy UniFi Network Application (linuxserver image) with a MongoDB backend behind Traefik via Docker Compose.
     description:
-      - Renders a docker-compose.yml under /opt/docker/unifi that runs
-        lscr.io/linuxserver/unifi-network-application alongside a docker.io/mongo backing store,
-        installs an init-mongo.sh into the project directory so MongoDB seeds the UniFi user on
-        first boot, and brings the stack up via community.docker.docker_compose_v2.
-      - Publishes the standard UniFi controller ports (8443/8080/3478/10001/etc.) directly on the
-        host, joins the external proxy_network for Traefik, and routes the web UI on the
-        configured hostname over the insecure-transport@file middleware (UniFi serves HTTPS with
-        a self-signed cert that Traefik must not verify).
+      - Renders a docker-compose.yml under /opt/docker/unifi that runs lscr.io/linuxserver/unifi-network-application alongside a docker.io/mongo backing store,
+        installs an init-mongo.sh into the project directory so MongoDB seeds the UniFi user on first boot, and brings the stack up via
+        community.docker.docker_compose_v2.
+      - Publishes the standard UniFi controller ports (8443/8080/3478/10001/etc.) directly on the host, joins the external proxy_network for Traefik, and routes
+        the web UI on the configured hostname over the insecure-transport@file middleware (UniFi serves HTTPS with a self-signed cert that Traefik must not
+        verify).
     author:
       - Dan Wallace
     options:

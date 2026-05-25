@@ -1,0 +1,10 @@
+---
+# handlers file for traefik
+
+- name: Restart traefik compose project
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/traefik
+    files:
+      - docker-compose.yml
+    state: restarted
+  become: true

@@ -1,0 +1,65 @@
+---
+# tasks file for traefik
+
+- name: Ensure /opt/docker/traefik directory exists
+  ansible.builtin.file:
+    path: /opt/docker/traefik
+    state: directory
+    owner: ansible
+    group: docker
+    mode: "0755"
+  become: true
+
+- name: Render traefik docker-compose.yml from template
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/docker/traefik/docker-compose.yml
+    owner: ansible
+    group: docker
+    mode: "0600"
+  become: true
+  notify: Restart traefik compose project
+
+- name: Render traefik static configuration from template
+  ansible.builtin.template:
+    src: traefik.yml.j2
+    dest: /opt/docker/traefik/traefik.yml
+    owner: ansible
+    group: docker
+    mode: "0600"
+  become: true
+  notify: Restart traefik compose project
+
+- name: Render traefik dynamic configuration from template
+  ansible.builtin.template:
+    src: dynamic_conf.yml.j2
+    dest: /opt/docker/traefik/dynamic_conf.yml
+    owner: ansible
+    group: docker
+    mode: "0600"
+  become: true
+  notify: Restart traefik compose project
+
+- name: Ensure acme.json exists with restrictive permissions
+  ansible.builtin.copy:
+    content: ""
+    dest: /opt/docker/traefik/acme.json
+    owner: ansible
+    group: docker
+    mode: "0600"
+    force: false
+  become: true
+
+- name: Ensure proxy_network external docker network exists
+  community.docker.docker_network:
+    name: proxy_network
+    state: present
+  become: true
+
+- name: Deploy traefik via docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/traefik
+    files:
+      - docker-compose.yml
+    state: present
+  become: true

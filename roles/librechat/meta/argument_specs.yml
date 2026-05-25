@@ -3,17 +3,14 @@ argument_specs:
   main:
     short_description: Deploy LibreChat (multi-LLM chat UI) with Meilisearch, pgvector, and a RAG sidecar behind Traefik via Docker Compose.
     description:
-      - Clones the LibreChat repository to librechat_install_path, renders .env / docker-compose.yml /
-        librechat.yaml from templates on top of the clone, ensures the external proxy_network Docker
-        network exists, and brings the stack (API, Meilisearch, pgvector, RAG API) up via
+      - Clones the LibreChat repository to librechat_install_path, renders .env / docker-compose.yml / librechat.yaml from templates on top of the clone,
+        ensures the external proxy_network Docker network exists, and brings the stack (API, Meilisearch, pgvector, RAG API) up via
         community.docker.docker_compose_v2.
-      - This argument_specs covers only the core required + commonly-overridden settings. The full
-        ~200-key interface (every LLM endpoint, every UI/speech/file/memory option) is documented in
-        defaults/main.yml as the canonical reference. Any default value listed there can be overridden
-        from inventory.
-      - Secrets are kept out of defaults/main.yml and out of this spec on purpose. The .env template
-        reads them from vault_librechat_* variables the caller must supply (see README for the full
-        list of vault keys the role expects).
+      - This argument_specs covers only the core required + commonly-overridden settings. The full ~200-key interface (every LLM endpoint, every
+        UI/speech/file/memory option) is documented in defaults/main.yml as the canonical reference. Any default value listed there can be overridden from
+        inventory.
+      - Secrets are kept out of defaults/main.yml and out of this spec on purpose. The .env template reads them from vault_librechat_* variables the caller must
+        supply (see README for the full list of vault keys the role expects).
     author:
       - Dan Wallace
     options:

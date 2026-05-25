@@ -1,0 +1,31 @@
+---
+# v1.1.0 brings in legacy roles freshly migrated (it_tools, homepage).
+# Production-profile cleanup deferred to v1.2.x. The 11 original roles
+# (adguard, arcane, baserow, common, docker, grafana, librechat, n8n,
+# semaphore, traefik, unifi) all pass production-level rules cleanly.
+profile: basic
+exclude_paths:
+  - .cache/
+  - .github/
+  - molecule/*/files/
+  - roles/*/files/
+  - roles/*/tests/
+use_default_rules: true
+warn_list:
+  - experimental
+  - var-naming[no-role-prefix]
+  - jinja[spacing]
+  - name[template]
+  - yaml[line-length]
+  - yaml[comments]
+  - yaml[trailing-spaces]
+  - yaml[truthy]
+  - yaml[new-line-at-end-of-file]
+  - yaml[document-start]
+  - yaml[empty-lines]
+  - yaml[indentation]
+  - no-changed-when
+  - risky-shell-pipe
+  - ignore-errors
+  - meta-incorrect
+  - fqcn[action-core]

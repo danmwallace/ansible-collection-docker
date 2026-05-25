@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: MIT-0
+---
+# defaults file for ansible_docker_it_tools
+
+it_tools_hostname: it-tools.example.com

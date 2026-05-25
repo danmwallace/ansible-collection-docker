@@ -16,7 +16,7 @@
   ansible.builtin.file:
     path: "{{ librechat_install_path }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
     owner: "{{ librechat_owner }}"
     group: "{{ librechat_group }}"
   become: true
@@ -65,7 +65,7 @@
   ansible.builtin.file:
     path: "{{ librechat_data_path }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
     owner: "{{ librechat_owner }}"
     group: "{{ librechat_group }}"
   become: true
@@ -78,7 +78,7 @@
     dest: "{{ librechat_install_path }}/.env"
     owner: "{{ librechat_owner }}"
     group: "{{ librechat_group }}"
-    mode: '0600'
+    mode: "0600"
   become: false
   notify: Restart librechat
   tags:
@@ -90,7 +90,7 @@
     dest: "{{ librechat_install_path }}/docker-compose.yml"
     owner: "{{ librechat_owner }}"
     group: "{{ librechat_group }}"
-    mode: '0600'
+    mode: "0600"
   become: false
   notify: Restart librechat
   tags:
@@ -102,7 +102,7 @@
     dest: "{{ librechat_install_path }}/librechat.yaml"
     owner: "{{ librechat_owner }}"
     group: "{{ librechat_group }}"
-    mode: '0600'
+    mode: "0600"
   become: false
   notify: Restart librechat
   tags:

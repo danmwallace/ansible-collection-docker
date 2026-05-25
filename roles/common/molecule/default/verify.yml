@@ -1,0 +1,70 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Stat /etc/sudoers.d/ansible
+      ansible.builtin.stat:
+        path: /etc/sudoers.d/ansible
+      register: common_sudoers_stat
+
+    - name: Assert sudoers fragment was written with 0440 perms
+      ansible.builtin.assert:
+        that:
+          - common_sudoers_stat.stat.exists
+          - common_sudoers_stat.stat.mode == '0440'
+          - common_sudoers_stat.stat.pw_name == 'root'
+
+    - name: Read sudoers fragment
+      ansible.builtin.slurp:
+        src: /etc/sudoers.d/ansible
+      register: common_sudoers
+
+    - name: Assert sudoers grants the ansible user passwordless sudo
+      ansible.builtin.assert:
+        that:
+          - "'ansible ALL=(ALL) NOPASSWD:ALL' in (common_sudoers.content | b64decode)"
+
+    - name: Look up testuser
+      ansible.builtin.getent:
+        database: passwd
+        key: testuser
+
+    - name: Assert testuser exists
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.getent_passwd['testuser'] is defined
+
+    - name: Read testuser group membership
+      ansible.builtin.command:
+        cmd: id -nG testuser
+      register: common_testuser_groups
+      changed_when: false
+
+    - name: Assert testuser is in the sudo group
+      ansible.builtin.assert:
+        that:
+          - "'sudo' in common_testuser_groups.stdout.split()"
+
+    - name: Stat testuser authorized_keys
+      ansible.builtin.stat:
+        path: /home/testuser/.ssh/authorized_keys
+      register: common_testuser_authkeys
+
+    - name: Assert authorized_keys is in place
+      ansible.builtin.assert:
+        that:
+          - common_testuser_authkeys.stat.exists
+
+    - name: Read timezone from timedatectl
+      ansible.builtin.command:
+        cmd: timedatectl show -p Timezone --value
+      register: common_actual_timezone
+      changed_when: false
+      failed_when: false
+
+    - name: Assert timezone is Etc/UTC when timedatectl is available
+      ansible.builtin.assert:
+        that:
+          - common_actual_timezone.stdout == 'Etc/UTC'
+      when: common_actual_timezone.rc == 0

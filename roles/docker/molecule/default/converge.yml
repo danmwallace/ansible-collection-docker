@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Apply docker role
+      ansible.builtin.include_role:
+        name: danmwallace.docker.docker

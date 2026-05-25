@@ -1,0 +1,59 @@
+---
+argument_specs:
+  main:
+    short_description: Baseline system configuration — hostname, packages, timezone, users, sudoers — for homelab hosts.
+    description:
+      - Sets the system hostname from inventory_hostname, installs a baseline package set (apt on Debian/Ubuntu, rpm-ostree on Fedora Atomic, dnf on Fedora
+        Server), conditionally installs qemu-guest-agent on KVM guests, sets the timezone, creates user accounts and grants them sudo/wheel + authorized SSH
+        keys, and drops a NOPASSWD sudoers fragment granting the ansible user passwordless sudo.
+    author:
+      - Dan Wallace
+    options:
+      common_packages_debian:
+        description: Package list installed via apt on Debian-family hosts.
+        type: list
+        elements: str
+        required: false
+        default:
+          - apt-transport-https
+          - ca-certificates
+          - cockpit
+          - curl
+          - git
+          - gnupg
+          - lsb-release
+          - python3
+          - python3-venv
+      common_packages_fedora:
+        description: Package list installed via dnf (Server) or rpm-ostree (Atomic) on Fedora hosts.
+        type: list
+        elements: str
+        required: false
+        default:
+          - ca-certificates
+          - certbot
+          - curl
+          - git
+          - gnupg2
+          - python3
+          - python3-virtualenv
+      common_timezone:
+        description: Timezone applied via community.general.timezone.
+        type: str
+        required: false
+        default: "America/New_York"
+      common_users:
+        description: User accounts to create and grant SSH access.
+        type: list
+        elements: dict
+        required: false
+        default: []
+        options:
+          name:
+            description: Login name.
+            type: str
+            required: true
+          ssh_key:
+            description: OpenSSH public key text installed as an authorized_key for the user.
+            type: str
+            required: true

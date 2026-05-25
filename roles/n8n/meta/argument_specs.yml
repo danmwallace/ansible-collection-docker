@@ -3,11 +3,9 @@ argument_specs:
   main:
     short_description: Deploy n8n workflow automation with a PostgreSQL backend behind Traefik via Docker Compose.
     description:
-      - Creates /opt/docker/n8n with subdirectories for local files and the n8n/postgres bind-mount
-        volumes, renders a docker-compose.yml that runs n8nio/n8n alongside a postgres:15 backing
-        store, and brings the stack up via community.docker.docker_compose_v2.
-      - Joins the external proxy_network Docker network and emits Traefik labels so the n8n web UI
-        is served on the supplied hostname.
+      - Creates /opt/docker/n8n with subdirectories for local files and the n8n/postgres bind-mount volumes, renders a docker-compose.yml that runs n8nio/n8n
+        alongside a postgres:15 backing store, and brings the stack up via community.docker.docker_compose_v2.
+      - Joins the external proxy_network Docker network and emits Traefik labels so the n8n web UI is served on the supplied hostname.
     author:
       - Dan Wallace
     options:

@@ -1,0 +1,28 @@
+---
+# SPDX-License-Identifier: MIT
+galaxy_info:
+  role_name: docker
+  namespace: danmwallace
+  author: Dan Wallace
+  description: Install Docker CE and the compose plugin on Debian, Ubuntu, and Fedora (Server and Atomic).
+  license: MIT
+  min_ansible_version: "2.16"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+    - name: Fedora
+      versions:
+        - all
+  galaxy_tags:
+    - docker
+    - containers
+    - dockerce
+    - compose
+    - install
+
+dependencies: []

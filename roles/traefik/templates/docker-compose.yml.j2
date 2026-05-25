@@ -1,0 +1,34 @@
+services:
+    traefik:
+      image: traefik:{{ traefik_version }}
+      command:
+        - "--api.dashboard=true"
+        - "--entrypoints.dash.address=:8081"
+      container_name: traefik
+      restart: unless-stopped
+      ports:
+        #- "80:80"
+        - "443:443"
+        - "8081:8081"  # Dashboard
+      environment:
+        - CF_API_EMAIL={{ traefik_cloudflare_email }}
+        - CF_DNS_API_TOKEN={{ traefik_cloudflare_api_token }}
+      volumes:
+        - "./traefik.yml:/etc/traefik/traefik.yml:ro"
+        - "./dynamic_conf.yml:/etc/traefik/dynamic_conf.yml:ro"
+        - "./letsencrypt:/letsencrypt"
+        - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      networks:
+        - proxy_network
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=proxy_network"
+        - "traefik.http.routers.traefik.rule=Host(`{{ traefik_hostname }}`)"
+        - "traefik.http.routers.traefik.entrypoints=websecure"
+        - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
+        - "traefik.http.routers.traefik.service=api@internal"
+
+networks:
+  proxy_network:
+    external: true
+    name: proxy_network

@@ -1,5 +1,5 @@
 ---
-#######################################################################
+# ######################################################################
 # defaults for ansible_docker_librechat
 #
 # These are fallback values. Real values should be set in the consuming
@@ -12,11 +12,11 @@
 # duplicated here.
 #
 # Reference: https://www.librechat.ai/docs/configuration/dotenv
-#######################################################################
+# ######################################################################
 
-############################################################################
+# ###########################################################################
 # Docker images (see docker-services.yml in group_vars)
-############################################################################
+# ###########################################################################
 
 librechat_api_image: ghcr.io/danny-avila/librechat-api:latest
 librechat_meilisearch_image: getmeili/meilisearch:v1.12.3
@@ -78,10 +78,8 @@ librechat_trust_proxy: 1
 
 # Minimum local password length (set to 1 when delegating to LDAP).
 librechat_min_password_length:
-
 # Keep the process alive on uncaught exceptions. Off in production.
 librechat_continue_on_uncaught_exception:
-
 librechat_uid: 0
 librechat_gid: 0
 
@@ -103,25 +101,22 @@ librechat_mongo_max_idle_time_ms:
 librechat_mongo_wait_queue_timeout_ms:
 librechat_mongo_auto_index:
 librechat_mongo_auto_create:
-
-############################################################################
+# ###########################################################################
 # Langfuse Tracing
-############################################################################
+# ###########################################################################
 
 librechat_langfuse_public_key:
 librechat_langfuse_secret_key:
 librechat_langfuse_base_url:
-
-############################################################################
+# ###########################################################################
 # Endpoints
-############################################################################
+# ###########################################################################
 
 librechat_endpoints: azureOpenAI,anthropic,agents,azureAssistants
 librechat_proxy:
-
-############################################################################
+# ###########################################################################
 # Anthropic
-############################################################################
+# ###########################################################################
 
 librechat_anthropic_models: claude-opus-4-7,claude-sonnet-4-6,claude-opus-4-6,claude-3-7-sonnet-20250219,claude-3-5-sonnet-20241022,claude-3-5-haiku-20241022
 librechat_anthropic_reverse_proxy:
@@ -133,10 +128,9 @@ librechat_anthropic_vertex_region: us-east5
 ############################################################################
 
 librechat_xai_api_key:
-
-############################################################################
+# ###########################################################################
 # BingAI
-############################################################################
+# ###########################################################################
 
 librechat_bingai_token: user_provided
 librechat_bingai_host: https://cn.bing.com
@@ -148,10 +142,9 @@ librechat_bingai_host: https://cn.bing.com
 librechat_bedrock_aws_default_region: us-east-1
 librechat_bedrock_aws_access_key_id:
 librechat_bedrock_aws_models:
-
-############################################################################
+# ###########################################################################
 # Google
-############################################################################
+# ###########################################################################
 
 librechat_google_key:
 librechat_google_reverse_proxy:
@@ -161,10 +154,9 @@ librechat_google_title_model: gemini-2.0-flash-lite-001
 librechat_google_loc: us-central1
 librechat_google_cloud_location:
 librechat_google_service_key_file:
-
-############################################################################
+# ###########################################################################
 # OpenAI
-############################################################################
+# ###########################################################################
 
 librechat_openai_api_key: user_provided
 librechat_openai_models:
@@ -176,10 +168,9 @@ librechat_openai_summary_model: gpt-4o-mini
 librechat_openai_force_prompt: true
 librechat_openai_reverse_proxy:
 librechat_openai_organization:
-
-############################################################################
+# ###########################################################################
 # Assistants API
-############################################################################
+# ###########################################################################
 
 librechat_assistants_api_key: user_provided
 librechat_assistants_base_url:
@@ -203,10 +194,9 @@ librechat_azure_ai_search_api_version:
 librechat_azure_ai_search_search_option_query_type:
 librechat_azure_ai_search_search_option_top:
 librechat_azure_ai_search_search_option_select:
-
-############################################################################
+# ###########################################################################
 # DALL·E
-############################################################################
+# ###########################################################################
 
 librechat_dalle_api_key:
 librechat_dalle3_api_key:
@@ -218,10 +208,9 @@ librechat_dalle3_baseurl:
 librechat_dalle2_baseurl:
 librechat_dalle3_azure_api_version: 2024-02-01
 librechat_dalle2_azure_api_version:
-
-############################################################################
+# ###########################################################################
 # OpenAI Image Tools (Agents)
-############################################################################
+# ###########################################################################
 
 librechat_image_gen_oai_api_key:
 librechat_image_gen_oai_baseurl:
@@ -233,17 +222,15 @@ librechat_image_gen_oai_description_no_files:
 librechat_image_edit_oai_description:
 librechat_image_gen_oai_prompt_description:
 librechat_image_edit_oai_prompt_description:
-
-############################################################################
+# ###########################################################################
 # Flux image generation
-############################################################################
+# ###########################################################################
 
 librechat_flux_api_base_url: https://api.us1.bfl.ai
 librechat_flux_api_key:
-
-############################################################################
+# ###########################################################################
 # Web / Tooling
-############################################################################
+# ###########################################################################
 
 librechat_google_search_api_key:
 librechat_google_cse_id:
@@ -254,7 +241,6 @@ librechat_traversaal_api_key:
 librechat_wolfram_app_id:
 librechat_zapier_nla_api_key:
 librechat_openrouter_key:
-
 # Web Search providers (librechat.yaml level)
 librechat_serper_api_key:
 librechat_firecrawl_api_key:
@@ -262,19 +248,17 @@ librechat_firecrawl_api_url:
 librechat_jina_api_key:
 librechat_cohere_api_key:
 librechat_openweather_api_key:
-
-############################################################################
+# ###########################################################################
 # Search (Meilisearch)
-############################################################################
+# ###########################################################################
 
 librechat_search: true
 librechat_meili_no_analytics: true
 librechat_meili_host: http://meilisearch:7700
 librechat_meili_no_sync:
-
-############################################################################
+# ###########################################################################
 # Speech to Text / Text to Speech
-############################################################################
+# ###########################################################################
 
 librechat_stt_instance_name:
 librechat_stt_deployment_name: whisper
@@ -304,7 +288,6 @@ librechat_rag_use_full_context: false
 librechat_openai_moderation: false
 librechat_openai_moderation_api_key:
 librechat_openai_moderation_reverse_proxy:
-
 librechat_ban_violations: true
 librechat_ban_duration: 1000 * 60 * 60 * 2
 librechat_ban_interval: 20
@@ -344,10 +327,9 @@ librechat_illegal_model_req_score: 5
 
 librechat_check_balance:
 librechat_start_balance:
-
-############################################################################
+# ###########################################################################
 # Registration and Login
-############################################################################
+# ###########################################################################
 
 librechat_allow_email_login: false
 librechat_allow_registration: false
@@ -401,7 +383,6 @@ librechat_openid_auto_redirect: false
 librechat_openid_use_pkce: false
 librechat_openid_post_logout_redirect_uri:
 librechat_openid_max_logout_url_length:
-
 # Microsoft Graph API scopes (Entra ID people search)
 librechat_use_entra_id_for_people_search: true
 librechat_entra_id_include_owners_as_members: true
@@ -421,7 +402,6 @@ librechat_saml_name_claim:
 librechat_saml_button_label:
 librechat_saml_image_url:
 librechat_saml_use_authn_response_signed:
-
 # LDAP
 librechat_ldap_url:
 librechat_ldap_bind_dn:
@@ -435,19 +415,17 @@ librechat_ldap_id:
 librechat_ldap_username:
 librechat_ldap_email:
 librechat_ldap_full_name:
-
-############################################################################
+# ###########################################################################
 # SharePoint File Picker
-############################################################################
+# ###########################################################################
 
 librechat_enable_sharepoint_filepicker: false
 librechat_sharepoint_base_url:
 librechat_sharepoint_picker_sharepoint_scope:
 librechat_sharepoint_picker_graph_scope:
-
-############################################################################
+# ###########################################################################
 # Email / Password Reset
-############################################################################
+# ###########################################################################
 
 librechat_email_service:
 librechat_email_host:
@@ -459,15 +437,13 @@ librechat_email_username:
 librechat_email_password:
 librechat_email_from_name:
 librechat_email_from:
-
 # Mailgun
 librechat_mailgun_api_key:
 librechat_mailgun_domain:
 librechat_mailgun_host:
-
-############################################################################
+# ###########################################################################
 # Firebase CDN
-############################################################################
+# ###########################################################################
 
 librechat_firebase_api_key:
 librechat_firebase_auth_domain:
@@ -475,20 +451,18 @@ librechat_firebase_project_id:
 librechat_firebase_storage_bucket:
 librechat_firebase_messaging_sender_id:
 librechat_firebase_app_id:
-
-############################################################################
+# ###########################################################################
 # AWS S3 (file storage)
-############################################################################
+# ###########################################################################
 
 librechat_aws_endpoint_url:
 librechat_aws_access_key_id:
 librechat_aws_region:
 librechat_aws_bucket_name:
 librechat_aws_force_path_style:
-
-############################################################################
+# ###########################################################################
 # Azure Blob Storage (file storage)
-############################################################################
+# ###########################################################################
 
 librechat_azure_storage_connection_string:
 librechat_azure_storage_public_access: false
@@ -500,35 +474,31 @@ librechat_azure_container_name: files
 
 librechat_allow_shared_links:
 librechat_allow_shared_links_public:
-
-############################################################################
+# ###########################################################################
 # Static File Cache Control
-############################################################################
+# ###########################################################################
 
 librechat_static_cache_max_age: 172800
 librechat_static_cache_s_max_age: 86400
 librechat_disable_compression: false
 librechat_enable_image_output_gzip_scan:
 librechat_conversation_import_max_file_size_bytes:
-
 # index.html cache headers
 librechat_index_cache_control:
 librechat_index_pragma:
 librechat_index_expires:
-
-############################################################################
+# ###########################################################################
 # UI
-############################################################################
+# ###########################################################################
 
 librechat_app_title: LibreChat
 librechat_custom_footer:
 librechat_help_and_faq_url: https://librechat.ai
 librechat_show_birthday_icon: false
 librechat_analytics_gtm_id:
-
-############################################################################
+# ###########################################################################
 # Redis (caching, sessions, resumable streams, multi-instance)
-############################################################################
+# ###########################################################################
 
 librechat_use_redis:
 librechat_use_redis_streams:
@@ -541,16 +511,14 @@ librechat_redis_key_prefix:
 librechat_redis_max_listeners:
 librechat_redis_ping_interval:
 librechat_forced_in_memory_cache_namespaces:
-
 # Leader election (multi-instance with Redis)
 librechat_leader_lease_duration:
 librechat_leader_renew_interval:
 librechat_leader_renew_attempts:
 librechat_leader_renew_retry_delay:
-
-############################################################################
+# ###########################################################################
 # MCP (Model Context Protocol) runtime tuning
-############################################################################
+# ###########################################################################
 
 librechat_mcp_oauth_on_auth_error:
 librechat_mcp_oauth_detection_timeout:
@@ -563,16 +531,14 @@ librechat_mcp_cb_max_failed_rounds:
 librechat_mcp_cb_failed_window_ms:
 librechat_mcp_cb_base_backoff_ms:
 librechat_mcp_cb_max_backoff_ms:
-
-############################################################################
+# ###########################################################################
 # Memory diagnostics
-############################################################################
+# ###########################################################################
 
 librechat_mem_diag:
-
-############################################################################
+# ###########################################################################
 # Memory feature (https://www.librechat.ai/docs/features/memory)
-############################################################################
+# ###########################################################################
 
 librechat_memory_enabled: true
 librechat_memory_valid_keys: ["preferences", "context", "facts"]

@@ -1,0 +1,9 @@
+---
+- name: Destroy molecule instance
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Stop and remove common-instance container
+      containers.podman.podman_container:
+        name: common-instance
+        state: absent
