@@ -42,6 +42,7 @@ tags: ["docker", "homelab", "smb", "infrastructure"]
 # range specifiers can be set and are separated by ','
 dependencies:
   community.docker: ">=3.0.0"
+  community.general: ">=8.0.0"
 
 # The URL of the originating SCM repository
 repository: https://github.com/danmwallace/ansible-collection-docker
