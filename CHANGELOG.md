@@ -12,7 +12,6 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 ### Added
 
 - `it_tools` role (formerly `ansible_docker_it_tools`) — deploys [it-tools](https://github.com/CorentinTh/it-tools).
-- `homepage` role (formerly `ansible_docker_homepage`) — deploys [Homepage](https://gethomepage.dev/).
 
 ## [1.0.0] - TBD
 

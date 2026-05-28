@@ -1,5 +1,5 @@
 ---
-# v1.1.0 brings in legacy roles freshly migrated (it_tools, homepage).
+# v1.1.0 brings in legacy roles freshly migrated (it_tools).
 # Production-profile cleanup deferred to v1.2.x. The 11 original roles
 # (adguard, arcane, baserow, common, docker, grafana, librechat, n8n,
 # semaphore, traefik, unifi) all pass production-level rules cleanly.

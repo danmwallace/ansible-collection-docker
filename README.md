@@ -45,7 +45,6 @@ collections:
 | [`danmwallace.docker.common`](roles/common/README.md) | Baseline system configuration — hostname, packages, timezone, users, sudoers — for homelab hosts. |
 | [`danmwallace.docker.docker`](roles/docker/README.md) | Install Docker CE and the compose plugin on Debian, Ubuntu, and Fedora (Server and Atomic). |
 | [`danmwallace.docker.grafana`](roles/grafana/README.md) | Deploy Grafana in Docker behind Traefik via Docker Compose. |
-| [`danmwallace.docker.homepage`](roles/homepage/README.md) | Deploy the Homepage application dashboard in Docker behind Traefik via Docker Compose. |
 | [`danmwallace.docker.it_tools`](roles/it_tools/README.md) | Deploy IT-Tools, a web collection of developer/IT utilities, in Docker behind Traefik via Docker Compose. |
 | [`danmwallace.docker.librechat`](roles/librechat/README.md) | Deploy LibreChat (multi-LLM chat UI) with Meilisearch, pgvector, and a RAG sidecar behind Traefik via Docker Compose. |
 | [`danmwallace.docker.n8n`](roles/n8n/README.md) | Deploy n8n workflow automation with a PostgreSQL backend behind Traefik via Docker Compose. |
@@ -62,7 +61,6 @@ collections:
     - danmwallace.docker.common
     - danmwallace.docker.docker
     - danmwallace.docker.traefik
-    - danmwallace.docker.homepage
 ```
 
 ## License
