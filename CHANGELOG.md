@@ -7,6 +7,12 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-05-28
+
+### Removed
+
+- `homepage` role — removed from the collection.
+
 ## [1.1.0] - TBD
 
 ### Added
