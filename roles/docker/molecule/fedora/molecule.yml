@@ -14,6 +14,7 @@ scenario:
     - dependency
     - destroy
     - create
+    - prepare
     - converge
     - idempotence
     - verify
