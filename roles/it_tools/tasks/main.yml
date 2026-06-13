@@ -4,45 +4,22 @@
 
 - name: Ensure it-tools directory exists
   ansible.builtin.file:
-    path: /opt/docker/it-tools/data
+    path: /opt/docker/it-tools
     state: directory
     mode: "0755"
   become: true
 
-###########################################################
-# (Re)Initialize docker containers
-# But first do soem pre-req checking to do some error checking if we are passing config updates to an existing server
-
-###########################################################
-# Copy over our docker-compose configuration
-
-###########################################################
-# Copy over our configuration for it-tools
-
-- name: Generate /opt/docker/it-tools/docker-compose.yml file from template
+- name: Render it-tools docker-compose.yml from template
   ansible.builtin.template:
     src: docker-compose.yml.j2
     dest: /opt/docker/it-tools/docker-compose.yml
     mode: "0600"
-    # backup: true
   become: true
-
-- name: Stop Docker Compose services if running
-  community.docker.docker_compose_v2:
-    project_src: /opt/docker/it-tools/
-    files:
-      - docker-compose.yml
-    state: absent # This will stop the services
-  ignore_errors: true
-  become: true
-
-###########################################################
-# Launch docker containers via docker compose
+  notify: Restart it-tools compose project
 
 - name: Deploy it-tools via docker compose
   community.docker.docker_compose_v2:
     project_src: /opt/docker/it-tools/
-    files:
-      - docker-compose.yml
     state: present
   become: true
+  tags: [molecule-notest]

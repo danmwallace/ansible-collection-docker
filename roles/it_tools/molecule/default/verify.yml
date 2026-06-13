@@ -1,0 +1,29 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Stat the rendered docker-compose file
+      ansible.builtin.stat:
+        path: /opt/docker/it-tools/docker-compose.yml
+      register: it_tools_compose_stat
+
+    - name: Assert docker-compose file was rendered with correct permissions
+      ansible.builtin.assert:
+        that:
+          - it_tools_compose_stat.stat.exists
+          - it_tools_compose_stat.stat.mode == '0600'
+
+    - name: Read rendered docker-compose file
+      ansible.builtin.slurp:
+        src: /opt/docker/it-tools/docker-compose.yml
+      register: it_tools_compose_contents
+
+    - name: Assert template substitutions produced the expected hostname and image
+      vars:
+        rendered: "{{ it_tools_compose_contents.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          - "'corentinth/it-tools:latest' in rendered"
+          - "'it-tools.test.local' in rendered"
+          - "'traefik.http.routers.it-tools.rule=Host(`it-tools.test.local`)' in rendered"

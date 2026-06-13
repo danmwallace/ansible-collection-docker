@@ -1,3 +1,10 @@
 # SPDX-License-Identifier: MIT
 ---
 # handlers file for it_tools
+
+- name: Restart it-tools compose project
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/it-tools/
+    state: restarted
+  become: true
+  tags: [molecule-notest]
