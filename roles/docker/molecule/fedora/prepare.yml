@@ -5,5 +5,5 @@
   tasks:
     - name: Install Python3
       ansible.builtin.raw: dnf install -y python3
-      register: python3_install
-      changed_when: "'Nothing to do' not in python3_install.stdout"
+      register: docker_python3_install
+      changed_when: "'Nothing to do' not in docker_python3_install.stdout"
