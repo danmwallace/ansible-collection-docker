@@ -16,7 +16,7 @@ services:
       - MEM_STARTUP={{ unifi_mem_startup }} #optional
       - MONGO_TLS={{ unifi_mongo_tls }} #optional
     volumes:
-      - /opt/docker/unifi/unifi-data:/config
+      - /opt/docker/unifi/unifi-data:/config:z
     ports:
       - 8443:8443
       - 3478:3478/udp
@@ -54,8 +54,8 @@ services:
       - MONGO_DBNAME={{ unifi_mongo_dbname }}
       - MONGO_AUTHSOURCE={{ unifi_mongo_authsource }}
     volumes:
-      - /opt/docker/unifi/mongodb:/data/db
-      - /opt/docker/unifi/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+      - /opt/docker/unifi/mongodb:/data/db:z
+      - /opt/docker/unifi/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro,z
     networks:
       - unifi_network
     restart: unless-stopped

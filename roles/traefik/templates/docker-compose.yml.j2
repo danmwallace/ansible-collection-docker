@@ -14,10 +14,10 @@ services:
         - CF_API_EMAIL={{ traefik_cloudflare_email }}
         - CF_DNS_API_TOKEN={{ traefik_cloudflare_api_token }}
       volumes:
-        - "./traefik.yml:/etc/traefik/traefik.yml:ro"
-        - "./dynamic_conf.yml:/etc/traefik/dynamic_conf.yml:ro"
-        - "./letsencrypt:/letsencrypt"
-        - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        - "./traefik.yml:/etc/traefik/traefik.yml:ro,z"
+        - "./dynamic_conf.yml:/etc/traefik/dynamic_conf.yml:ro,z"
+        - "./letsencrypt:/letsencrypt:z"
+        - "/var/run/docker.sock:/var/run/docker.sock:ro,z"
       networks:
         - proxy_network
       labels:

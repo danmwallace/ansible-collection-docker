@@ -22,12 +22,16 @@ services:
       - type: bind
         source: ./librechat.yaml
         target: /app/librechat.yaml
-      - ./images:/app/client/public/images
-      - ./logs:/app/api/logs
+        bind:
+          selinux: z
+      - ./images:/app/client/public/images:z
+      - ./logs:/app/api/logs:z
 {% if librechat_obsidian_mount_enabled %}
       - type: bind
         source: {{ librechat_obsidian_mount_path }}
         target: {{ librechat_obsidian_mount_path }}
+        bind:
+          selinux: z
 {% endif %}
     labels:
       - "traefik.enable=true"

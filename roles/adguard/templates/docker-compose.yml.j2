@@ -14,8 +14,8 @@ services:
     networks:
       - proxy_network
     volumes:
-      - ./data/conf:/opt/adguardhome/conf
-      - ./data/work:/opt/adguardhome/work
+      - ./data/conf:/opt/adguardhome/conf:z
+      - ./data/work:/opt/adguardhome/work:z
     container_name: adguard
     labels:
       - "traefik.enable=true"
