@@ -13,11 +13,17 @@ argument_specs:
       - Dan Wallace
     options:
       docker_fedora_packages:
-        description: Packages installed via dnf on Fedora Server. Tweak to add/remove components (e.g. docker-buildx-plugin).
+        description: >-
+          Packages installed via dnf on Fedora Server. Defaults include docker-ce,
+          docker-ce-cli, docker-buildx-plugin, docker-compose-plugin, containerd.io,
+          and container-selinux.
         type: list
         elements: str
         required: false
         default:
           - docker-ce
+          - docker-ce-cli
+          - docker-buildx-plugin
           - docker-compose-plugin
           - containerd.io
+          - container-selinux

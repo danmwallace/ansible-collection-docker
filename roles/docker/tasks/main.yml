@@ -92,6 +92,15 @@
     - ansible_facts['distribution'] == "Fedora"
     - docker_variant_id.stdout not in ['iot', 'coreos', 'silverblue', 'kinoite']
 
+- name: Enable docker.service on Fedora Server
+  ansible.builtin.systemd:
+    name: docker.service
+    enabled: true
+  become: true
+  when:
+    - ansible_facts['distribution'] == "Fedora"
+    - docker_variant_id.stdout not in ['iot', 'coreos', 'silverblue', 'kinoite']
+
 # --- User configuration ---
 
 - name: Ensure docker group exists
