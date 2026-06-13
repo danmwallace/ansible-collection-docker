@@ -6,7 +6,7 @@
     - name: Start docker-fedora-instance container
       containers.podman.podman_container:
         name: docker-fedora-instance
-        image: registry.fedoraproject.org/fedora-toolbox:42
+        image: registry.fedoraproject.org/fedora:42
         state: started
         command: /sbin/init
         privileged: true

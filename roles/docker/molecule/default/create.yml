@@ -6,7 +6,7 @@
     - name: Start docker-instance container
       containers.podman.podman_container:
         name: docker-instance
-        image: docker.io/jrei/systemd-ubuntu:24.04
+        image: quay.io/ansible/molecule-ubuntu:noble
         state: started
         command: /sbin/init
         privileged: true
@@ -14,12 +14,3 @@
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:rw
         cgroupns: host
-
-- name: Prepare molecule instance
-  hosts: molecule
-  gather_facts: true
-  tasks:
-    - name: Ensure ansible user exists (role's final task adds it to the docker group)
-      ansible.builtin.user:
-        name: ansible
-        state: present
