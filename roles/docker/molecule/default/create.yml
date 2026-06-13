@@ -6,7 +6,7 @@
     - name: Start docker-instance container
       containers.podman.podman_container:
         name: docker-instance
-        image: quay.io/ansible/molecule-ubuntu:noble
+        image: docker.io/jrei/systemd-ubuntu:24.04
         state: started
         command: /sbin/init
         privileged: true

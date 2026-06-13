@@ -1,0 +1,21 @@
+---
+dependency:
+  name: galaxy
+provisioner:
+  name: ansible
+  inventory:
+    hosts:
+      molecule:
+        hosts:
+          docker-fedora-instance:
+            ansible_connection: containers.podman.podman
+scenario:
+  test_sequence:
+    - dependency
+    - destroy
+    - create
+    - converge
+    - idempotence
+    - verify
+    - cleanup
+    - destroy

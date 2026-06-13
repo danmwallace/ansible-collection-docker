@@ -1,0 +1,80 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Stat the docker yum repo file
+      ansible.builtin.stat:
+        path: /etc/yum.repos.d/docker-ce.repo
+      register: docker_repo
+
+    - name: Assert docker yum repo is installed
+      ansible.builtin.assert:
+        that:
+          - docker_repo.stat.exists
+
+    - name: Check docker-ce is installed
+      ansible.builtin.command:
+        cmd: rpm -q docker-ce
+      register: docker_rpm
+      changed_when: false
+
+    - name: Assert docker-ce package is installed
+      ansible.builtin.assert:
+        that:
+          - docker_rpm.rc == 0
+
+    - name: Check docker-ce-cli is installed
+      ansible.builtin.command:
+        cmd: rpm -q docker-ce-cli
+      register: docker_cli_rpm
+      changed_when: false
+
+    - name: Assert docker-ce-cli is installed
+      ansible.builtin.assert:
+        that:
+          - docker_cli_rpm.rc == 0
+
+    - name: Check container-selinux is installed
+      ansible.builtin.command:
+        cmd: rpm -q container-selinux
+      register: container_selinux_rpm
+      changed_when: false
+
+    - name: Assert container-selinux is installed
+      ansible.builtin.assert:
+        that:
+          - container_selinux_rpm.rc == 0
+
+    - name: Check docker.service is enabled
+      ansible.builtin.command:
+        cmd: systemctl is-enabled docker.service
+      register: docker_enabled
+      changed_when: false
+      failed_when: false
+
+    - name: Assert docker.service is enabled
+      ansible.builtin.assert:
+        that:
+          - docker_enabled.stdout == 'enabled'
+
+    - name: Look up the docker group
+      ansible.builtin.getent:
+        database: group
+        key: docker
+
+    - name: Assert docker group exists
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.getent_group['docker'] is defined
+
+    - name: Read ansible user group membership
+      ansible.builtin.command:
+        cmd: id -nG ansible
+      register: docker_ansible_groups
+      changed_when: false
+
+    - name: Assert ansible user is in docker group
+      ansible.builtin.assert:
+        that:
+          - "'docker' in docker_ansible_groups.stdout.split()"
