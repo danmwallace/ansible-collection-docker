@@ -13,13 +13,13 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 - `homepage` role — removed from the collection.
 
-## [1.1.0] - TBD
+## [1.1.0] - 2026-05-27
 
 ### Added
 
 - `it_tools` role (formerly `ansible_docker_it_tools`) — deploys [it-tools](https://github.com/CorentinTh/it-tools).
 
-## [1.0.0] - TBD
+## [1.0.0] - 2026-05-01
 
 ### Added
 
