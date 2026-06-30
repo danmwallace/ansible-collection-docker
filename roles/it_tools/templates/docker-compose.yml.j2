@@ -1,6 +1,6 @@
 services:
   it-tools:
-    image: 'corentinth/it-tools:latest'
+    image: 'corentinth/it-tools:{{ it_tools_version | default("latest") }}'
     ports:
     - '8079:80'
     restart: unless-stopped

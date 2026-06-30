@@ -1,6 +1,6 @@
 services:
   unifi-network-application:
-    image: lscr.io/linuxserver/unifi-network-application:latest
+    image: lscr.io/linuxserver/unifi-network-application:{{ unifi_version | default('9.0.114') }}
     container_name: unifi-network-application
     environment:
       - PUID={{ unifi_puid }}
@@ -18,10 +18,10 @@ services:
     volumes:
       - /opt/docker/unifi/unifi-data:/config:z
     ports:
-      - 8443:8443
+      - "{{ unifi_bind_address | default('127.0.0.1') }}:8443:8443"
       - 3478:3478/udp
       - 10001:10001/udp
-      - 8080:8080
+      - "{{ unifi_bind_address | default('127.0.0.1') }}:8080:8080"
       - 1900:1900/udp #optional
       - 8843:8843 #optional
       - 8880:8880 #optional

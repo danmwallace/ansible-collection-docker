@@ -1,11 +1,11 @@
 services:
   adguard:
-    image: adguard/adguardhome:latest
+    image: adguard/adguardhome:{{ adguard_version | default('v0.107.63') }}
     restart: always
     ports:
-      - 53:53/tcp
-      - 53:53/udp
-      - 67:67/udp
+      - "{{ adguard_bind_address }}:53:53/tcp"
+      - "{{ adguard_bind_address }}:53:53/udp"
+      - "{{ adguard_bind_address }}:67:67/udp"
       - 853:853/tcp
       - 853:853/udp
       - 5443:5443/tcp

@@ -1,3 +1,11 @@
 ---
 # SPDX-License-Identifier: MIT
 # defaults file for adguard
+
+# Bind DNS (port 53) and DHCP (port 67) to this address.
+# Should be set to the host's LAN/homelab IP so DNS is only reachable internally.
+# Example: adguard_bind_address: "192.168.1.10"
+adguard_bind_address: "{{ ansible_host }}"
+
+# Image version to deploy. Pin to a specific release for reproducibility.
+adguard_version: "v0.107.63"
