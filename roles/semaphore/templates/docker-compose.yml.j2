@@ -1,6 +1,6 @@
 services:
   semaphore_db:
-    image: postgres
+    image: postgres:15
     environment:
       POSTGRES_USER: {{ semaphore_postgres_user }}
       POSTGRES_PASSWORD: {{ semaphore_postgres_password }}

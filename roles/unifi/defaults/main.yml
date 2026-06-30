@@ -18,3 +18,10 @@ unifi_mongo_tls: "false"
 
 unifi_mem_limit: 1024
 unifi_mem_startup: 1024
+
+# Bind admin ports (8443, 8080) to this address. Default is localhost only.
+# Set to the host's homelab IP (e.g. 192.168.1.x) for LAN access without Traefik.
+unifi_bind_address: "127.0.0.1"
+
+# Image version to deploy. Pin to a specific release for reproducibility.
+unifi_version: "9.0.114"

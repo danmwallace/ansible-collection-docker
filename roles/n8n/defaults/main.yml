@@ -1,2 +1,5 @@
 ---
 # defaults file for n8n
+
+# Image version to deploy. Pin to a specific release for reproducibility.
+n8n_version: "1.73.1"
