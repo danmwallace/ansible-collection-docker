@@ -37,8 +37,8 @@ services:
       - "traefik.http.routers.unifi-network-application.tls.certresolver=cloudflare"
       - "traefik.http.routers.unifi-network-application.tls=true"
       - "traefik.http.services.unifi-network-application.loadbalancer.server.scheme=https"
-      # Use the insecure-transport defined in traefik dynamic configuration to connect to the unifi app over https without cert validation
-      - "traefik.http.services.unifi-network-application.loadbalancer.serversTransport=insecure-transport@file"
+      # Use the unifi-insecure-transport defined in traefik dynamic configuration to connect to the unifi app over https without cert validation
+      - "traefik.http.services.unifi-network-application.loadbalancer.serversTransport=unifi-insecure-transport@file"
       - "traefik.http.services.unifi-network-application.loadbalancer.server.port=8443"
       - "traefik.http.services.unifi-network-application.loadbalancer.passhostheader=true"
     networks:

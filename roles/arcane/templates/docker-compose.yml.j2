@@ -2,6 +2,29 @@
 # Generated at 2/8/2026, 11:52:46 PM
 
 services:
+  socket-proxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:{{ arcane_socket_proxy_version }}
+    container_name: arcane-socket-proxy
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - CONTAINERS=1
+      - IMAGES=1
+      - NETWORKS=1
+      - VOLUMES=1
+      - SERVICES=1
+      - TASKS=1
+      - INFO=1
+      - VERSION=1
+      - POST=1
+      - BUILD=0
+      - AUTH=0
+      - SECRETS=0
+      - SWARM=0
+    networks:
+      - arcane_socket_net
+
   arcane:
     image: ghcr.io/getarcaneapp/arcane:{{ arcane_version }}
     container_name: arcane
@@ -9,7 +32,6 @@ services:
     ports:
       - 3552
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:z
       - arcane-data:/app/data
     environment:
       - APP_URL="https://{{ arcane_hostname }}"
@@ -25,11 +47,14 @@ services:
       - OIDC_ENABLED=true
       - OIDC_SCOPES=openid email profile
       - DATABASE_URL={{ arcane_database_url }}
+      - DOCKER_HOST=tcp://socket-proxy:2375
     depends_on:
       - arcane-postgres
+      - socket-proxy
     networks:
       - arcane_network
       - proxy_network
+      - arcane_socket_net
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy_network"
@@ -62,6 +87,9 @@ volumes:
 networks:
   arcane_network:
     driver: "bridge"
+  arcane_socket_net:
+    driver: bridge
+    internal: true
   proxy_network:
     external: true
     name: proxy_network
