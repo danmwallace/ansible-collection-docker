@@ -3,7 +3,7 @@ services:
     container_name: LibreChat-API
     image: {{ librechat_api_image }}
     ports:
-      - {{ librechat_port }}:{{ librechat_port }}
+      - "127.0.0.1:{{ librechat_port }}:{{ librechat_port }}"
     depends_on:
       - rag_api
     restart: always
