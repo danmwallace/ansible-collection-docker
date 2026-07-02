@@ -17,6 +17,11 @@ argument_specs:
         type: str
         required: false
         default: latest
+      arcane_socket_proxy_version:
+        description: Image tag for ghcr.io/tecnativa/docker-socket-proxy used to safely expose the Docker socket to Arcane.
+        type: str
+        required: false
+        default: "0.3.0"
       arcane_encryption_key:
         description: Encryption key used by Arcane (ENCRYPTION_KEY). Should be a long random string supplied from vault.
         type: str

@@ -3,6 +3,7 @@
 # defaults file for arcane
 
 arcane_version: latest
+arcane_socket_proxy_version: "0.3.0"
 
 arcane_postgres_db: arcane
 arcane_postgres_user: arcane
