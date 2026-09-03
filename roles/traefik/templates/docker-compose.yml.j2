@@ -8,7 +8,7 @@ services:
       restart: unless-stopped
       ports:
         #- "80:80"
-        - "443:443"
+        - "{{ traefik_https_bind_address }}:443:443"
         - "127.0.0.1:8081:8081"  # Dashboard
       environment:
         - CF_API_EMAIL={{ traefik_cloudflare_email }}

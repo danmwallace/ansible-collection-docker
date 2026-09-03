@@ -26,3 +26,11 @@ argument_specs:
         type: str
         required: false
         default: v3.6.2
+      traefik_https_bind_address:
+        description:
+          - IP address the HTTPS ingress port (443) is bound to.
+          - Defaults to 0.0.0.0 (all interfaces), which is the expected behaviour for a public reverse proxy.
+          - Override to a specific interface IP on dual-homed hosts to restrict which interface accepts inbound HTTPS.
+        type: str
+        required: false
+        default: "0.0.0.0"

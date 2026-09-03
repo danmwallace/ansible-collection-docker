@@ -8,4 +8,4 @@
 adguard_bind_address: "{{ ansible_host }}"
 
 # Image version to deploy. Pin to a specific release for reproducibility.
-adguard_version: "v0.107.63"
+adguard_version: "v0.107.78"

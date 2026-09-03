@@ -1,6 +1,15 @@
 ---
 # tasks file for n8n
 
+- name: Assert required n8n secrets are set
+  ansible.builtin.assert:
+    that:
+      - n8n_encryption_key is defined
+      - n8n_encryption_key | length >= 16
+      - n8n_postgres_password is defined
+      - n8n_postgres_password | length >= 12
+    fail_msg: "n8n_encryption_key (min 16 chars) and n8n_postgres_password (min 12 chars) must be set from vault."
+
 - name: Create /opt/docker/n8n directories
   ansible.builtin.file:
     path: "{{ item }}"

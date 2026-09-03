@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 # defaults file for arcane
 
-arcane_version: latest
+arcane_version: "0.6.0"
 arcane_socket_proxy_version: "0.3.0"
 
 arcane_postgres_db: arcane

@@ -11,7 +11,7 @@ unifi_mongo_user: unifi
 unifi_mongo_host: unifi-db
 unifi_mongo_port: 27017
 unifi_mongo_dbname: unifi
-unifi_mongo_version: 7.0.26
+unifi_mongo_version: 8.0.11
 unifi_mongo_authsource: admin
 unifi_mongo_initdb_root_username: root
 unifi_mongo_tls: "false"
@@ -26,4 +26,4 @@ unifi_mem_startup: 1024
 unifi_bind_address: "127.0.0.1"
 
 # Image version to deploy. Pin to a specific release for reproducibility.
-unifi_version: "9.0.114"
+unifi_version: "10.4.57"

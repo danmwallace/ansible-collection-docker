@@ -24,10 +24,10 @@
 # Docker images (see docker-services.yml in group_vars)
 # ###########################################################################
 
-librechat_api_image: ghcr.io/danny-avila/librechat-api:v0.7.9
-librechat_meilisearch_image: getmeili/meilisearch:v1.12.3
-librechat_vectordb_image: pgvector/pgvector:0.8.0-pg15-trixie
-librechat_ragapi_image: ghcr.io/danny-avila/librechat-rag-api-dev-lite:v0.4.0
+librechat_api_image: ghcr.io/danny-avila/librechat-api:v0.8.5
+librechat_meilisearch_image: getmeili/meilisearch:v1.49.0
+librechat_vectordb_image: pgvector/pgvector:0.8.0-pg16-bookworm
+librechat_ragapi_image: ghcr.io/danny-avila/librechat-rag-api-dev-lite:v0.4.6
 
 librechat_vectordb_postgres_db: librechat
 librechat_vectordb_postgres_user: librechat
@@ -38,7 +38,7 @@ librechat_vectordb_postgres_user: librechat
 
 # Git ref (tag or branch) to clone LibreChat at. Pin to a release tag for
 # reproducibility; "main" tracks upstream HEAD.
-librechat_version: main
+librechat_version: "v0.8.5"
 
 # Filesystem layout for /opt/docker/librechat. Future work: revisit whether
 # /opt/docker is the right home, and whether ansible:docker is the right
@@ -86,8 +86,8 @@ librechat_trust_proxy: 1
 librechat_min_password_length:
 # Keep the process alive on uncaught exceptions. Off in production.
 librechat_continue_on_uncaught_exception:
-librechat_uid: 0
-librechat_gid: 0
+librechat_uid: 3000
+librechat_gid: 3000
 
 ############################################################################
 # Node Options

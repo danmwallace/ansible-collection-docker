@@ -16,7 +16,7 @@ argument_specs:
         description: Image tag for ghcr.io/getarcaneapp/arcane.
         type: str
         required: false
-        default: latest
+        default: "0.6.0"
       arcane_socket_proxy_version:
         description: Image tag for ghcr.io/tecnativa/docker-socket-proxy used to safely expose the Docker socket to Arcane.
         type: str

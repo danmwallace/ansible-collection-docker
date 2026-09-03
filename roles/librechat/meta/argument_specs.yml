@@ -59,12 +59,12 @@ argument_specs:
         description: Image tag for the Meilisearch container.
         type: str
         required: false
-        default: getmeili/meilisearch:v1.12.3
+        default: getmeili/meilisearch:v1.49.0
       librechat_vectordb_image:
         description: Image tag for the pgvector PostgreSQL container used by the RAG sidecar.
         type: str
         required: false
-        default: pgvector/pgvector:0.8.0-pg15-trixie
+        default: pgvector/pgvector:0.8.0-pg16-bookworm
       librechat_ragapi_image:
         description: Image tag for the LibreChat RAG API sidecar.
         type: str

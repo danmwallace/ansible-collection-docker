@@ -2,7 +2,7 @@ services:
   it-tools:
     image: 'corentinth/it-tools:{{ it_tools_version }}'
     ports:
-    - '8079:80'
+    - '{{ it_tools_bind_address }}:8079:80'
     restart: unless-stopped
     container_name: it-tools
     labels:

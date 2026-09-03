@@ -26,7 +26,7 @@ argument_specs:
         description: Image tag for semaphoreui/semaphore.
         type: str
         required: false
-        default: v2.16.47
+        default: v2.19.0
       semaphore_postgres_user:
         description: PostgreSQL user used by Semaphore.
         type: str

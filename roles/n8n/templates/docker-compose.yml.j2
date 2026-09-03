@@ -35,7 +35,7 @@ services:
       - n8n
       - proxy_network
   n8n-postgres:
-    image: postgres:15
+    image: postgres:17-alpine
     container_name: n8n-postgres
     restart: always
     environment:

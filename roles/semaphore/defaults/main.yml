@@ -1,7 +1,7 @@
 ---
 # defaults file for semaphore
 
-semaphore_version: v2.16.47
+semaphore_version: v2.19.0
 
 semaphore_postgres_user: semaphore
 semaphore_postgres_db: semaphore

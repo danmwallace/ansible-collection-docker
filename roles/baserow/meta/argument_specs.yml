@@ -17,4 +17,4 @@ argument_specs:
         description: Image tag for baserow/baserow.
         type: str
         required: false
-        default: "2.2.2"
+        default: "2.3.2"

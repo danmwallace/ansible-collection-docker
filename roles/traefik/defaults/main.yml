@@ -3,3 +3,8 @@
 # defaults file for traefik
 
 traefik_version: v3.6.2
+
+# Bind address for the HTTPS ingress port (443). Explicitly set to 0.0.0.0
+# to document that all-interfaces binding is intentional for a public reverse
+# proxy. Override to a specific interface IP on dual-homed hosts.
+traefik_https_bind_address: "0.0.0.0"

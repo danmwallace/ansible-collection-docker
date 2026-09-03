@@ -4,6 +4,11 @@
 
 it_tools_hostname: it-tools.example.com
 
+# Bind address for the direct host port (8079). Defaults to localhost so the
+# port is not exposed on all interfaces. Set to "0.0.0.0" only if access
+# without Traefik is intentionally required.
+it_tools_bind_address: "127.0.0.1"
+
 # Image version to deploy. Pin to a specific release for reproducibility.
 # See https://hub.docker.com/r/corentinth/it-tools/tags for available versions.
 it_tools_version: "2024.10.22-1"

@@ -1,6 +1,15 @@
 ---
 # tasks file for semaphore
 
+- name: Assert required semaphore secrets are set
+  ansible.builtin.assert:
+    that:
+      - semaphore_postgres_password is defined
+      - semaphore_postgres_password | length >= 12
+      - semaphore_admin_password is defined
+      - semaphore_admin_password | length >= 12
+    fail_msg: "semaphore_postgres_password (min 12 chars) and semaphore_admin_password (min 12 chars) must be set from vault."
+
 - name: Ensure /opt/docker/semaphore directory exists
   ansible.builtin.file:
     path: /opt/docker/semaphore
