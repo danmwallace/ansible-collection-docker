@@ -6,28 +6,58 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `danmwallace.docker` is an Ansible Collection (FQCN namespace `danmwallace`, name `docker`). Each role under `roles/` deploys one Docker Compose stack on a target host. Roles are designed to share a single `traefik` reverse proxy for routing and TLS, so they can be composed together on the same host without conflict.
 
-The broader homelab playbooks that consume this collection live in `~/Documents/Code/ansible/ansible-homelab-cfg/`. The legacy standalone roles under `~/Documents/Code/ansible/ansible-homelab-roles/` (named `ansible_docker_*`) are being migrated **into** this collection — see the `/migrate-role` slash command in `.claude/commands/`.
+This checkout lives at `~/Code/Infrastructure/dev-collections/ansible_collections/danmwallace/docker/`. The homelab playbooks that consume it live in the control repo at `~/Code/Infrastructure/ansible-homelab-cfg/` (see `~/Code/Infrastructure/CLAUDE.md` for the workspace layout). The legacy standalone `ansible_docker_*` roles were migrated **into** this collection during the Phase 3 restructure; the `ansible-homelab-roles/` repo they came from **no longer exists**. The `/migrate-role` slash command in `.claude/commands/` is kept for the pattern only.
 
 ## Common Commands
 
-The shared lint/test toolchain lives in the homelab-cfg venv. Run from the collection root unless noted:
+The shared lint/test toolchain lives in the control repo's venv (there is no venv inside this collection):
+
+```
+~/Code/Infrastructure/ansible-homelab-cfg/.venv/bin/
+```
+
+Either put that directory on `PATH`, or prefix commands with `uv run --project ~/Code/Infrastructure/ansible-homelab-cfg`.
+
+> **Warning — do not set `ANSIBLE_COLLECTIONS_PATH` to the dev-collections tree.**
+> ansible-lint and molecule both run an ansible-compat "prerun" that builds this
+> collection and installs it into the **first** entry of the collections path.
+> When that entry is `~/Code/Infrastructure/dev-collections`, the install target
+> is this very checkout, and `ansible-galaxy collection install --force` deletes
+> the source tree before unpacking the tarball over it. This wiped a sibling
+> collection's checkout on 2026-09-08. Run the tools with no collections-path
+> override at all; nothing below needs one.
+
+Run from the collection root unless noted:
 
 ```bash
-# Lint a single role (use full venv path — there is no venv inside this collection)
-/home/dwallace/Documents/Code/ansible/ansible-homelab-cfg/.venv/bin/ansible-lint roles/<role>/
+# Lint a single role. --offline stops ansible-lint from trying to fetch
+# dependencies from Galaxy; no env override is needed.
+ansible-lint --offline roles/<role>
 
 # Lint everything
-/home/dwallace/Documents/Code/ansible/ansible-homelab-cfg/.venv/bin/ansible-lint roles/
-
-# Molecule test for one role — must `cd` into the role directory first
-cd roles/<role> && molecule test            # full sequence
-cd roles/<role> && molecule converge        # just apply, leave instance up for debugging
-cd roles/<role> && molecule verify          # re-run verify.yml against running instance
-cd roles/<role> && molecule destroy         # tear down
+ansible-lint --offline
 
 # Build the collection tarball
 ansible-galaxy collection build
 ```
+
+Molecule — never run it inside this checkout with a collections-path override (see the warning above). Two safe options:
+
+1. Run in place with **no** `ANSIBLE_COLLECTIONS_PATH` set. Must `cd` into the role directory first:
+
+   ```bash
+   cd roles/<role> && molecule test            # full sequence
+   cd roles/<role> && molecule converge        # just apply, leave instance up for debugging
+   cd roles/<role> && molecule verify          # re-run verify.yml against running instance
+   cd roles/<role> && molecule destroy         # tear down
+   ```
+
+2. Copy the tree to a scratch directory that mirrors the Galaxy layout and run there, so the prerun can never touch the source:
+
+   ```bash
+   rsync -a --exclude .git ./ /tmp/scratch/ansible_collections/danmwallace/docker/
+   cd /tmp/scratch/ansible_collections/danmwallace/docker/roles/<role> && molecule test
+   ```
 
 The Molecule scenarios use Podman as the driver via the **ansible-native delegated** pattern (`create.yml`/`destroy.yml` in each scenario manage the container directly via `containers.podman.podman_container`). There is no `driver:` block in `molecule.yml` — do not add one, and do not regress to the deprecated `driver: name: docker` shape.
 
@@ -69,6 +99,6 @@ Each role's `molecule/default/` directory contains exactly: `molecule.yml`, `cre
 
 ## Repository-Specific Workflows
 
-- **Migrating a legacy `ansible_docker_*` role into the collection**: run `/migrate-role <new_role_name> <path_to_old_role_repo>`. The skill copies files, rewrites modules to FQCN, generates `argument_specs.yml`, modernizes the Molecule scenario, runs ansible-lint, and produces a commit message. It does NOT run `git add`/`git commit` — the user reviews and commits manually.
+- **Migrating a legacy `ansible_docker_*` role into the collection**: run `/migrate-role <new_role_name> <path_to_old_role_repo>`. The skill copies files, rewrites modules to FQCN, generates `argument_specs.yml`, modernizes the Molecule scenario, runs ansible-lint, and produces a commit message. It does NOT run `git add`/`git commit` — the user reviews and commits manually. The `ansible-homelab-roles/` repo it was written against is gone; point it at any standalone role checkout.
 - **Commit-message convention**: imperative subject line referencing the role, e.g. `Add unifi role migrated from ansible_docker_unifi`. Recent commits follow this exactly; match the style.
 - **`.gitignore`** excludes `.ansible/` and `.claude/`. Anything you put under `.claude/` (skills, commands, settings) stays local to the working copy.
