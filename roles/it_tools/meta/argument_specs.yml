@@ -3,10 +3,10 @@ argument_specs:
   main:
     short_description: Deploy IT-Tools developer utility suite in Docker behind Traefik via Docker Compose.
     description:
-      - Creates /opt/docker/it-tools/data owned by ansible:docker, renders a docker-compose.yml that runs corentinth/it-tools:latest on the
-        external proxy_network, stops any running stack, and brings it back up with community.docker.docker_compose_v2.
+      - Creates /opt/docker/it-tools, renders a docker-compose.yml that runs corentinth/it-tools:{{ it_tools_version }} on the external
+        proxy_network, and brings the stack up with community.docker.docker_compose_v2; a handler restarts the project when the compose file changes.
       - The web UI is routed by Traefik on the supplied hostname over the websecure entrypoint, and is also published directly on host port 8079
-        for LAN access.
+        (bound to it_tools_bind_address, loopback by default).
     author:
       - Dan Wallace
     options:
@@ -23,3 +23,10 @@ argument_specs:
         type: str
         required: false
         default: "127.0.0.1"
+      it_tools_version:
+        description:
+          - Tag of the corentinth/it-tools image to deploy. Pin to a specific release for reproducibility.
+          - Upstream tags are "<date>-<short sha>"; see https://hub.docker.com/r/corentinth/it-tools/tags.
+        type: str
+        required: false
+        default: "2024.10.22-7ca5933"

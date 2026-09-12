@@ -52,6 +52,9 @@ services:
     environment:
       - MEILI_HOST=http://meilisearch:7700
       - MEILI_NO_ANALYTICS=true
+{% if librechat_meilisearch_upgrade_db | bool %}
+      - MEILI_UPGRADE_DB=true
+{% endif %}
     volumes:
       - {{ librechat_data_path }}/meilisearch:/meili_data
     networks:

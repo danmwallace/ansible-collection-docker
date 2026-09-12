@@ -1,6 +1,6 @@
 # danmwallace.docker.common
 
-Baseline system configuration for homelab hosts. Sets the system hostname from `inventory_hostname`, installs a baseline package set (apt on Debian/Ubuntu, `rpm-ostree` on Fedora Atomic, `dnf` on Fedora Server), conditionally installs `qemu-guest-agent` on KVM guests, sets the timezone, creates user accounts and grants them `sudo`/`wheel` membership plus authorized SSH keys, and drops a `/etc/sudoers.d/ansible` fragment that grants the `ansible` user passwordless sudo.
+Baseline system configuration for homelab hosts. Sets the system hostname from `inventory_hostname`, installs a baseline package set (apt on Debian/Ubuntu, `rpm-ostree` on Fedora Atomic, `dnf` on Fedora Server), conditionally installs `qemu-guest-agent` on KVM guests, sets the timezone, creates user accounts and grants them `sudo`/`wheel` membership plus authorized SSH keys, and (by default) drops a `/etc/sudoers.d/ansible` fragment that grants the `ansible` user passwordless sudo.
 
 > **Note on collection placement.** This role is not Docker-specific. It lives in `danmwallace.docker` for convenience, but conceptually belongs in a baseline collection (`danmwallace.common`). The FQCN `danmwallace.docker.common` reads a bit odd; that's intentional and unavoidable for now.
 
@@ -19,6 +19,7 @@ Baseline system configuration for homelab hosts. Sets the system hostname from `
 | `common_packages_fedora` | list[str] | no | ca-certificates, certbot, curl, git, gnupg2, python3, python3-virtualenv | Package list installed via dnf (Server) or rpm-ostree (Atomic) on Fedora hosts. |
 | `common_timezone` | str | no | `America/New_York` | Timezone applied via `community.general.timezone`. |
 | `common_users` | list[dict] | no | `[]` | User accounts to create. Each entry is `{ name: <login>, ssh_key: "<openssh public key>" }`. |
+| `common_ansible_nopasswd_sudo` | bool | no | `true` | Whether to write `/etc/sudoers.d/ansible` granting the `ansible` account `ALL=(ALL) NOPASSWD:ALL`. Set `false` on hosts where Ansible escalates with a become password; the fragment is then removed if present. |
 
 The `ansible` user that gets the passwordless-sudo grant is hard-coded in `tasks/main.yml`. Edit the task there if you want a different user.
 
@@ -48,7 +49,11 @@ None.
 4. On Fedora, parses `VARIANT_ID` from `/etc/os-release` to distinguish Atomic (IoT/CoreOS/Silverblue/Kinoite) from Server, and picks `rpm-ostree` or `dnf` accordingly.
 5. Sets the system timezone.
 6. Creates user accounts in `common_users`, adding them to `sudo` (Debian-family) or `wheel` (Fedora), and installs each user's SSH key into `authorized_keys`.
-7. Drops `/etc/sudoers.d/ansible` granting `ansible ALL=(ALL) NOPASSWD:ALL` (mode 0440, validated with `visudo -cf`).
+7. When `common_ansible_nopasswd_sudo` is `true`, drops `/etc/sudoers.d/ansible` granting `ansible ALL=(ALL) NOPASSWD:ALL` (mode 0440, validated with `visudo -cf`). When `false`, removes that file if it exists, so flipping the flag converges cleanly in either direction.
+
+## Notes
+
+- `common_ansible_nopasswd_sudo` is a security trade-off. `true` is what unattended Ansible runs need when the `ansible` account has no password, but it means anyone holding the `ansible` SSH key is root with no second factor. Prefer `false` plus `ansible_become_password` on hosts that are not managed purely non-interactively.
 
 ## License
 
