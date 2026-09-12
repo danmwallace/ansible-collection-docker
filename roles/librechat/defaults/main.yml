@@ -24,13 +24,19 @@
 # Docker images (see docker-services.yml in group_vars)
 # ###########################################################################
 
-librechat_api_image: ghcr.io/danny-avila/librechat-api:v0.8.5
-librechat_meilisearch_image: getmeili/meilisearch:v1.49.0
-librechat_vectordb_image: pgvector/pgvector:0.8.0-pg16-bookworm
-librechat_ragapi_image: ghcr.io/danny-avila/librechat-rag-api-dev-lite:v0.4.6
+librechat_api_image: ghcr.io/danny-avila/librechat-api:v0.8.7
+librechat_meilisearch_image: getmeili/meilisearch:v1.53.2
+librechat_vectordb_image: pgvector/pgvector:0.8.6-pg16-bookworm
+librechat_ragapi_image: ghcr.io/danny-avila/librechat-rag-api-dev-lite:v0.9.0
 
 librechat_vectordb_postgres_db: librechat
 librechat_vectordb_postgres_user: librechat
+
+# Meilisearch refuses to start on a data directory written by an older
+# version unless told to upgrade it. Leave this on so a minor-version bump
+# (e.g. v1.49 -> v1.53) sets MEILI_UPGRADE_DB=true and migrates the index in
+# place; set false to fail loudly instead of auto-upgrading.
+librechat_meilisearch_upgrade_db: true
 
 ############################################################################
 # LibreChat repo + paths
@@ -38,7 +44,7 @@ librechat_vectordb_postgres_user: librechat
 
 # Git ref (tag or branch) to clone LibreChat at. Pin to a release tag for
 # reproducibility; "main" tracks upstream HEAD.
-librechat_version: "v0.8.5"
+librechat_version: "v0.8.7"
 
 # Filesystem layout for /opt/docker/librechat. Future work: revisit whether
 # /opt/docker is the right home, and whether ansible:docker is the right

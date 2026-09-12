@@ -22,7 +22,7 @@ argument_specs:
         description: Git ref (tag or branch) of danny-avila/LibreChat to clone. "main" tracks upstream HEAD; pin to a release tag for reproducibility.
         type: str
         required: false
-        default: main
+        default: v0.8.7
       librechat_install_path:
         description: Filesystem location of the LibreChat checkout. All rendered config files live here.
         type: path
@@ -54,22 +54,22 @@ argument_specs:
         description: Image tag for the LibreChat API container.
         type: str
         required: false
-        default: ghcr.io/danny-avila/librechat-api:latest
+        default: ghcr.io/danny-avila/librechat-api:v0.8.7
       librechat_meilisearch_image:
         description: Image tag for the Meilisearch container.
         type: str
         required: false
-        default: getmeili/meilisearch:v1.49.0
+        default: getmeili/meilisearch:v1.53.2
       librechat_vectordb_image:
         description: Image tag for the pgvector PostgreSQL container used by the RAG sidecar.
         type: str
         required: false
-        default: pgvector/pgvector:0.8.0-pg16-bookworm
+        default: pgvector/pgvector:0.8.6-pg16-bookworm
       librechat_ragapi_image:
         description: Image tag for the LibreChat RAG API sidecar.
         type: str
         required: false
-        default: ghcr.io/danny-avila/librechat-rag-api-dev-lite:latest
+        default: ghcr.io/danny-avila/librechat-rag-api-dev-lite:v0.9.0
       librechat_vectordb_postgres_db:
         description: PostgreSQL database name used by the pgvector container.
         type: str
@@ -80,6 +80,15 @@ argument_specs:
         type: str
         required: false
         default: librechat
+      librechat_meilisearch_upgrade_db:
+        description:
+          - Set MEILI_UPGRADE_DB=true on the Meilisearch container so it migrates an existing data directory in place when the image
+            is bumped to a newer minor version (required for the v1.49 to v1.53 move in 1.3.1). Without it Meilisearch refuses to start on
+            a database written by an older version.
+          - Set to false to disable the automatic in-place upgrade and fail loudly on a version mismatch instead.
+        type: bool
+        required: false
+        default: true
       librechat_obsidian_mount_enabled:
         description: Whether to bind-mount an Obsidian vault into the container and register an mcp-obsidian server in librechat.yaml.
         type: bool

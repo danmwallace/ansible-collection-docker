@@ -118,3 +118,11 @@
     group: root
     validate: "visudo -cf %s"
   become: true
+  when: common_ansible_nopasswd_sudo | bool
+
+- name: Ensure the ansible sudoers fragment is absent when passwordless sudo is disabled
+  ansible.builtin.file:
+    path: /etc/sudoers.d/ansible
+    state: absent
+  become: true
+  when: not (common_ansible_nopasswd_sudo | bool)

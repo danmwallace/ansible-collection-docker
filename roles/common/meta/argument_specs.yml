@@ -5,7 +5,7 @@ argument_specs:
     description:
       - Sets the system hostname from inventory_hostname, installs a baseline package set (apt on Debian/Ubuntu, rpm-ostree on Fedora Atomic, dnf on Fedora
         Server), conditionally installs qemu-guest-agent on KVM guests, sets the timezone, creates user accounts and grants them sudo/wheel + authorized SSH
-        keys, and drops a NOPASSWD sudoers fragment granting the ansible user passwordless sudo.
+        keys, and (when common_ansible_nopasswd_sudo is true) drops a NOPASSWD sudoers fragment granting the ansible user passwordless sudo.
     author:
       - Dan Wallace
     options:
@@ -57,3 +57,12 @@ argument_specs:
             description: OpenSSH public key text installed as an authorized_key for the user.
             type: str
             required: true
+      common_ansible_nopasswd_sudo:
+        description:
+          - Whether to write /etc/sudoers.d/ansible granting the ansible account "ALL=(ALL) NOPASSWD:ALL".
+          - Trade-off - true is required for unattended runs where the ansible user has no password, but it means anyone holding the
+            ansible SSH key has root without a second factor. Set false on hosts where Ansible escalates with a become password
+            (ansible_become_password); the role then removes the fragment if it exists, so the flag is idempotent in both directions.
+        type: bool
+        required: false
+        default: true

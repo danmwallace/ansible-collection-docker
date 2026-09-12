@@ -32,3 +32,10 @@ common_timezone: "America/New_York"
 #     - name: dwallace
 #       ssh_key: "ssh-ed25519 AAAA..."
 common_users: []
+
+# Whether to drop /etc/sudoers.d/ansible granting the `ansible` account
+# NOPASSWD:ALL. Required for unattended runs where the ansible user has no
+# password; set false on hosts where Ansible can escalate with a become
+# password so a leaked ansible SSH key does not equal instant root. When
+# false the fragment is removed if present.
+common_ansible_nopasswd_sudo: true

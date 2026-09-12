@@ -24,6 +24,6 @@
         rendered: "{{ it_tools_compose_contents.content | b64decode }}"
       ansible.builtin.assert:
         that:
-          - "'corentinth/it-tools:latest' in rendered"
+          - "'corentinth/it-tools:2024.10.22-7ca5933' in rendered"
           - "'it-tools.test.local' in rendered"
           - "'traefik.http.routers.it-tools.rule=Host(`it-tools.test.local`)' in rendered"
