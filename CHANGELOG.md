@@ -67,6 +67,16 @@ Fedora Server support.
 
 - `homepage` role — removed from the collection.
 
+## [1.1.1] - 2026-05-28
+
+### Fixed
+
+- `librechat`: converge is now idempotent. The compose file renders to the untracked
+  `docker-compose.ansible.yml` instead of upstream's git-tracked `docker-compose.yml`, which
+  the `git` module reverted on every run and re-triggered a stack restart. The
+  ownership-migration `find` also prunes `.git`, whose files the `git` module rewrites with
+  the connecting user's primary group on every fetch.
+
 ## [1.1.0] - 2026-05-27
 
 ### Added
