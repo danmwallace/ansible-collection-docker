@@ -29,12 +29,11 @@ services:
     image: ghcr.io/getarcaneapp/arcane:{{ arcane_version }}
     container_name: arcane
     restart: unless-stopped
-    ports:
-      - 3552
+    # No published port: Traefik reaches Arcane over proxy_network (#61).
     volumes:
       - arcane-data:/app/data
     environment:
-      - APP_URL="https://{{ arcane_hostname }}"
+      - APP_URL=https://{{ arcane_hostname }}
       - PUID=1000
       - PGID=1000
       - ENCRYPTION_KEY={{ arcane_encryption_key }}
@@ -44,8 +43,6 @@ services:
       - POSTGRES_DB={{ arcane_postgres_db }}
       - POSTGRES_USER={{ arcane_postgres_user }}
       - POSTGRES_PASSWORD={{ arcane_postgres_password }}
-      - OIDC_ENABLED=true
-      - OIDC_SCOPES=openid email profile
       - DATABASE_URL={{ arcane_database_url }}
       - DOCKER_HOST=tcp://socket-proxy:2375
     depends_on:
@@ -64,7 +61,7 @@ services:
       - "traefik.http.services.arcane.loadbalancer.server.port=3552"
 
   arcane-postgres:
-    image: postgres:17-alpine
+    image: postgres:{{ arcane_postgres_version }}
     container_name: arcane-postgres
     restart: unless-stopped
     environment:
@@ -73,8 +70,7 @@ services:
       - POSTGRES_PASSWORD={{ arcane_postgres_password }}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    ports:
-      - 5432
+    # No published port: Arcane reaches Postgres over arcane_network (#54).
     networks:
       - arcane_network
 

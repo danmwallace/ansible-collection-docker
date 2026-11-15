@@ -34,3 +34,4 @@
       - docker-compose.yml
     state: present
   become: true
+  when: arcane_deploy | bool
