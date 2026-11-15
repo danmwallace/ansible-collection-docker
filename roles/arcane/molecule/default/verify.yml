@@ -25,6 +25,24 @@
       ansible.builtin.assert:
         that:
           - "'arcane.test.local' in rendered"
-          - "'ghcr.io/getarcaneapp/arcane:latest' in rendered"
+          - "'ghcr.io/getarcaneapp/arcane:v2.10.2' in rendered"
+          - "'docker-socket-proxy:v0.5.0' in rendered"
           - "'traefik.http.routers.arcane.rule=Host(`arcane.test.local`)' in rendered"
           - "'POSTGRES_PASSWORD=test-postgres-password' in rendered"
+
+    - name: Assert nothing is published on the host and the images are pinned
+      vars:
+        rendered: "{{ arcane_compose_contents.content | b64decode }}"
+      ansible.builtin.assert:
+        that:
+          # Traefik reaches Arcane over proxy_network and Arcane reaches Postgres over
+          # arcane_network, so no port belongs on the host (#54, #61).
+          - "'ports:' not in rendered"
+          - "'postgres:17.11-alpine' in rendered"
+          - "'postgres:17-alpine' not in rendered"
+          # In compose list syntax the quotes would become part of the value.
+          - "'APP_URL=https://arcane.test.local' in rendered"
+          - "'APP_URL=\"' not in rendered"
+          # OIDC_ENABLED without an issuer or client configured only breaks the login page.
+          - "'OIDC_ENABLED' not in rendered"
+        fail_msg: "{{ arcane_compose_contents.content | b64decode }}"

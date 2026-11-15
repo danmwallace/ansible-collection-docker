@@ -7,6 +7,28 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-15
+
+### Security
+
+- `arcane`: publish no host ports. Postgres 5432 and the Arcane UI 3552 were published, with Docker short syntax, on random host ports on every interface, bypassing Traefik (#54, #61). Traefik and Arcane reach them over their compose networks.
+- `arcane`: pin Postgres to `17.11-alpine` (new `arcane_postgres_version`) instead of the floating `17-alpine` (#58).
+
+### Changed
+
+- `arcane`: the default image moves from `0.6.0` to `v2.10.2`, and socket-proxy from `0.3.0` to `v0.5.0`, matching `danmwallace.podman.arcane` (#53). Arcane migrates its database on start: back up the `postgres-data` volume, or pin `arcane_version`.
+- `arcane`: drop `OIDC_ENABLED`/`OIDC_SCOPES`, which were on with no issuer or client configured. Fix `APP_URL`, whose quotes were part of the value in compose list syntax.
+
+### Added
+
+- `arcane`: `arcane_deploy` (default `true`). When `false`, the role renders the compose file without starting or restarting the stack.
+
+### Fixed
+
+- `arcane` molecule: the scenario never passed its inventory, so converge and verify ran against no hosts and passed without testing anything.
+  - It now passes the inventory, uses `docker.io/jrei/systemd-ubuntu:noble` (`quay.io/ansible/molecule-ubuntu:noble` is gone), uses `su` for become, and renders with `arcane_deploy: false`.
+  - Its old image assertion (`arcane:latest`) had never actually run.
+
 ## [1.3.1] - 2026-09-12
 
 ### Fixed

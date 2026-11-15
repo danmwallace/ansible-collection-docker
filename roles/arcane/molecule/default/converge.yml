@@ -8,6 +8,7 @@
         name: danmwallace.docker.arcane
       vars:
         arcane_hostname: arcane.test.local
+        arcane_deploy: false  # no Docker in the test container; verify checks the rendered file
         arcane_encryption_key: test-encryption-key-not-for-production
         arcane_jwt_secret: test-jwt-secret-not-for-production
         arcane_postgres_password: test-postgres-password

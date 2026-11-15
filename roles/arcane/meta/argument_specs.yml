@@ -8,6 +8,10 @@ argument_specs:
     author:
       - Dan Wallace
     options:
+      arcane_deploy:
+        description: When false, render /opt/docker/arcane/docker-compose.yml without starting or restarting the stack (used by molecule).
+        type: bool
+        default: true
       arcane_hostname:
         description: Public hostname the Arcane web UI is served on; used for APP_URL and the Traefik Host rule.
         type: str
@@ -16,12 +20,17 @@ argument_specs:
         description: Image tag for ghcr.io/getarcaneapp/arcane.
         type: str
         required: false
-        default: "0.6.0"
+        default: v2.10.2
+      arcane_postgres_version:
+        description: Image tag for postgres (pinned to a patch release; the same pin as danmwallace.podman.arcane).
+        type: str
+        required: false
+        default: 17.11-alpine
       arcane_socket_proxy_version:
         description: Image tag for ghcr.io/tecnativa/docker-socket-proxy used to safely expose the Docker socket to Arcane.
         type: str
         required: false
-        default: "0.3.0"
+        default: v0.5.0
       arcane_encryption_key:
         description: Encryption key used by Arcane (ENCRYPTION_KEY). Should be a long random string supplied from vault.
         type: str
