@@ -10,5 +10,6 @@
         arcane_hostname: arcane.test.local
         arcane_deploy: false  # no Docker in the test container; verify checks the rendered file
         arcane_encryption_key: test-encryption-key-not-for-production # molecule-test-only: fake value, not a real credential
+        # Deprecated and ignored since 3.x; set here to prove old inventories still pass (verify checks it is not rendered).
         arcane_jwt_secret: test-jwt-secret-not-for-production # molecule-test-only: fake value, not a real credential
         arcane_postgres_password: test-postgres-password # molecule-test-only: fake value, not a real credential

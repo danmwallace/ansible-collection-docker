@@ -13,14 +13,16 @@ argument_specs:
         type: bool
         default: true
       arcane_hostname:
-        description: Public hostname the Arcane web UI is served on; used for APP_URL and the Traefik Host rule.
+        description: Public hostname the Arcane web UI is served on; used for ARCANE_APP_URL and the Traefik Host rule.
         type: str
         required: true
       arcane_version:
-        description: Image tag for ghcr.io/getarcaneapp/arcane.
+        description:
+          - Image tag for ghcr.io/getarcaneapp/manager. Must be v3.0.0 or newer; the role renders a 3.x-only compose file.
+          - Upgrading from 2.x requires running v2.17.3 once first (see the README).
         type: str
         required: false
-        default: v2.10.2
+        default: v3.1.1
       arcane_postgres_version:
         description: Image tag for postgres (pinned to a patch release; the same pin as danmwallace.podman.arcane).
         type: str
@@ -32,13 +34,18 @@ argument_specs:
         required: false
         default: v0.5.0
       arcane_encryption_key:
-        description: Encryption key used by Arcane (ENCRYPTION_KEY). Should be a long random string supplied from vault.
+        description:
+          - Encryption key used by Arcane (ARCANE_ENCRYPTION_KEY), supplied from vault.
+          - "At least 32 characters, or a hex: or base64: encoded 32-byte key; Arcane 3.x refuses shorter passphrases."
+          - Keep the value used under 2.x, or Arcane cannot decrypt its stored secrets.
         type: str
         required: true
       arcane_jwt_secret:
-        description: JWT signing secret used by Arcane (JWT_SECRET). Should be a long random string supplied from vault.
+        description:
+          - Deprecated and ignored. Arcane 3.x signs sessions with its own key and no longer reads JWT_SECRET.
+          - Accepted so existing inventories keep working; it will be removed in a later major release.
         type: str
-        required: true
+        required: false
       arcane_postgres_db:
         description: PostgreSQL database name for Arcane.
         type: str
