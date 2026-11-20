@@ -63,6 +63,11 @@ collections:
     - danmwallace.docker.traefik
 ```
 
+## Testing
+
+Molecule scenarios under `roles/*/molecule/` intentionally use fixed, fake credentials (each line is tagged `# molecule-test-only`) so the throwaway test containers converge without a vault.
+They are not real secrets and must never be reused; real credentials always come from Ansible Vault.
+
 ## License
 
 MIT

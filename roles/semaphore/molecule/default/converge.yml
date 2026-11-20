@@ -8,5 +8,5 @@
         name: danmwallace.docker.semaphore
       vars:
         semaphore_hostname: semaphore.test.local
-        semaphore_postgres_password: test-postgres-pw
-        semaphore_admin_password: test-admin-pw
+        semaphore_postgres_password: test-postgres-pw # molecule-test-only: fake value, not a real credential
+        semaphore_admin_password: test-admin-pw # molecule-test-only: fake value, not a real credential

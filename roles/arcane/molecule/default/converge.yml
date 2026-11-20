@@ -9,6 +9,6 @@
       vars:
         arcane_hostname: arcane.test.local
         arcane_deploy: false  # no Docker in the test container; verify checks the rendered file
-        arcane_encryption_key: test-encryption-key-not-for-production
-        arcane_jwt_secret: test-jwt-secret-not-for-production
-        arcane_postgres_password: test-postgres-password
+        arcane_encryption_key: test-encryption-key-not-for-production # molecule-test-only: fake value, not a real credential
+        arcane_jwt_secret: test-jwt-secret-not-for-production # molecule-test-only: fake value, not a real credential
+        arcane_postgres_password: test-postgres-password # molecule-test-only: fake value, not a real credential

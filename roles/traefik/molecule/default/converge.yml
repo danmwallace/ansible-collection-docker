@@ -8,5 +8,5 @@
         name: danmwallace.docker.traefik
       vars:
         traefik_hostname: traefik.test.local
-        traefik_cloudflare_api_token: test-cloudflare-token
+        traefik_cloudflare_api_token: test-cloudflare-token # molecule-test-only: fake value, not a real credential
         traefik_cloudflare_email: test@test.local
