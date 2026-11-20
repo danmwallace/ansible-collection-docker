@@ -37,6 +37,6 @@
       ansible.builtin.assert:
         that:
           - "'librechat.test.local' in rendered"
-          - "'ghcr.io/danny-avila/librechat-api' in rendered"
-          - "'getmeili/meilisearch' in rendered"
-          - "'pgvector/pgvector' in rendered"
+          - "'ghcr.io/librechat-ai/librechat-api:v0.8.9' in rendered"
+          - "'getmeili/meilisearch:v1.57.0' in rendered"
+          - "'pgvector/pgvector:0.8.7-pg16-bookworm' in rendered"
