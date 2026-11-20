@@ -569,3 +569,6 @@ librechat_memory_agent_temperature: 0.3
 librechat_node_env: production
 librechat_e2e_user_email:
 librechat_e2e_user_password:
+
+# false renders the compose project without starting or restarting the stack.
+librechat_deploy: true

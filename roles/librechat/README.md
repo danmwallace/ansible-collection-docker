@@ -42,6 +42,7 @@ The role exposes ~200 settings via `defaults/main.yml` — every LLM endpoint, e
 | `librechat_meilisearch_upgrade_db` | bool | no | `true` | Set `MEILI_UPGRADE_DB=true` on the Meilisearch container so it migrates an existing index in place when the image moves to a newer minor version. Set `false` to fail loudly on a version mismatch instead. |
 | `librechat_obsidian_mount_enabled` | bool | no | `true` | Bind-mount an Obsidian vault and register the mcp-obsidian server. |
 | `librechat_obsidian_mount_path` | path | no | `/opt/syncthing/obsidian` | Host path of the Obsidian vault when the mount is enabled. |
+| `librechat_deploy` | bool | no | `true` | When `false`, renders the compose project under `librechat_install_path` without starting or restarting the stack (molecule uses this). |
 
 Everything else in `defaults/main.yml` is overridable from inventory the usual way; consult that file for the comprehensive list.
 

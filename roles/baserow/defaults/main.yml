@@ -3,3 +3,6 @@
 # defaults file for baserow
 
 baserow_version: "2.3.2"
+
+# false renders the compose project without starting or restarting the stack.
+baserow_deploy: true

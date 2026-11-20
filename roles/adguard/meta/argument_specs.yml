@@ -10,6 +10,10 @@ argument_specs:
     author:
       - Dan Wallace
     options:
+      adguard_deploy:
+        description: When false, render the compose project and its config without starting or restarting the stack (used by molecule).
+        type: bool
+        default: true
       adguard_hostname:
         description: Public hostname Traefik routes to the AdGuard Home web UI.
         type: str

@@ -9,3 +9,4 @@
     state: restarted
     pull: always
   become: false
+  when: librechat_deploy | bool

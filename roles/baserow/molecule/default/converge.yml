@@ -7,4 +7,5 @@
       ansible.builtin.include_role:
         name: danmwallace.docker.baserow
       vars:
+        baserow_deploy: false  # no Docker in the test container; verify checks the rendered files
         baserow_hostname: baserow.test.local

@@ -23,6 +23,7 @@ Deploys [Semaphore UI](https://www.semaphoreui.com/), a web frontend for Ansible
 | `semaphore_admin_name` | str | no | `Admin` | Display name for the Semaphore admin account. |
 | `semaphore_admin_email` | str | no | `admin@localhost` | Email address for the Semaphore admin account. |
 | `semaphore_ansible_host_key_checking` | str | no | `"false"` | Passed through to the container's `ANSIBLE_HOST_KEY_CHECKING`. String, not bool. |
+| `semaphore_deploy` | bool | no | `true` | When `false`, renders the compose project under `/opt/docker/semaphore/` without starting or restarting the stack (molecule uses this). |
 
 ## Dependencies
 

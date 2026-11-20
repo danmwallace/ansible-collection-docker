@@ -8,3 +8,4 @@
       - docker-compose.yml
     state: restarted
   become: true
+  when: grafana_deploy | bool

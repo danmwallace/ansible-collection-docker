@@ -9,6 +9,10 @@ argument_specs:
     author:
       - Dan Wallace
     options:
+      traefik_deploy:
+        description: When false, render the compose project and its config without starting or restarting the stack (used by molecule).
+        type: bool
+        default: true
       traefik_hostname:
         description: Public hostname Traefik routes to its own dashboard (api@internal).
         type: str

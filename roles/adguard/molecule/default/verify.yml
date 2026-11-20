@@ -45,7 +45,7 @@
         rendered: "{{ adguard_compose_contents.content | b64decode }}"
       ansible.builtin.assert:
         that:
-          - "'adguard/adguardhome:latest' in rendered"
+          - "'adguard/adguardhome:v0.107.78' in rendered"
           - "'traefik.http.routers.adguard.rule=Host(`adguard.test.local`)' in rendered"
           - "'53:53/udp' in rendered"
           - "'proxy_network' in rendered"

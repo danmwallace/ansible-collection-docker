@@ -27,3 +27,6 @@ unifi_bind_address: "127.0.0.1"
 
 # Image version to deploy. Pin to a specific release for reproducibility.
 unifi_version: "10.4.57"
+
+# false renders the compose project without starting or restarting the stack.
+unifi_deploy: true

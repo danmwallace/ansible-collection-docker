@@ -55,6 +55,7 @@
     name: proxy_network
     state: present
   become: true
+  when: traefik_deploy | bool
 
 - name: Deploy traefik via docker compose
   community.docker.docker_compose_v2:
@@ -63,3 +64,4 @@
       - docker-compose.yml
     state: present
   become: true
+  when: traefik_deploy | bool

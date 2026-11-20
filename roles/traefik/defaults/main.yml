@@ -8,3 +8,6 @@ traefik_version: v3.6.2
 # to document that all-interfaces binding is intentional for a public reverse
 # proxy. Override to a specific interface IP on dual-homed hosts.
 traefik_https_bind_address: "0.0.0.0"
+
+# false renders the compose project without starting or restarting the stack.
+traefik_deploy: true

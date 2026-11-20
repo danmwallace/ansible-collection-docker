@@ -7,6 +7,7 @@
       ansible.builtin.include_role:
         name: danmwallace.docker.grafana
       vars:
+        grafana_deploy: false  # no Docker in the test container; verify checks the rendered files
         grafana_hostname: grafana.test.local
         grafana_admin_password: test-admin-password # molecule-test-only: fake value, not a real credential
         grafana_cpu_limit: "1"

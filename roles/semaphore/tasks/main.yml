@@ -32,3 +32,4 @@
       - docker-compose.yml
     state: present
   become: true
+  when: semaphore_deploy | bool

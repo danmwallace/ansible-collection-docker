@@ -35,3 +35,4 @@
       - docker-compose.yml
     state: present
   become: true
+  when: unifi_deploy | bool

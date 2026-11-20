@@ -6,7 +6,7 @@
     - name: Start librechat-instance container
       containers.podman.podman_container:
         name: librechat-instance
-        image: quay.io/ansible/molecule-ubuntu:noble
+        image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init
         privileged: true
@@ -18,6 +18,9 @@
 - name: Prepare molecule instance
   hosts: molecule
   gather_facts: true
+  vars:
+    # The ansible user does not exist yet; play vars outrank the inventory's ansible_user.
+    ansible_user: root
   tasks:
     - name: Ensure docker group exists (role tasks chown files to it)
       ansible.builtin.group:
@@ -29,3 +32,22 @@
         name: ansible
         group: docker
         state: present
+
+    # The role clones LibreChat with ansible.builtin.git but leaves installing git to the
+    # common role (common_packages_debian); the minimal test image has neither git nor sudo.
+    - name: Ensure git and sudo are installed, as the common role leaves them on real hosts
+      ansible.builtin.apt:
+        name:
+          - git
+          - sudo
+        state: present
+        update_cache: true
+
+    - name: Ensure the ansible user has passwordless sudo, as the common role grants
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/ansible
+        content: "ansible ALL=(ALL) NOPASSWD:ALL\n"
+        mode: "0440"
+        owner: root
+        group: root
+        validate: visudo -cf %s

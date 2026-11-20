@@ -29,3 +29,4 @@
       - docker-compose.yml
     state: present
   become: true
+  when: adguard_deploy | bool
