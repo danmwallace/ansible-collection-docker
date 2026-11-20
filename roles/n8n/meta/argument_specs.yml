@@ -13,6 +13,11 @@ argument_specs:
         description: When false, render the compose project and its config without starting or restarting the stack (used by molecule).
         type: bool
         default: true
+      n8n_version:
+        description: Image tag for n8nio/n8n, pinned to a release. n8n migrates its database on start and has no downgrade path.
+        type: str
+        required: false
+        default: "2.48.6"
       n8n_hostname:
         description: Public hostname Traefik routes to the n8n web UI; also used for N8N_HOST and WEBHOOK_URL.
         type: str

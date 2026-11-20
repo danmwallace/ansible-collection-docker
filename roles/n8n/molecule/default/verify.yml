@@ -51,3 +51,5 @@
           - "'N8N_ENCRYPTION_KEY=test-encryption-key-not-for-production' in rendered"
           - "'DB_POSTGRESDB_PASSWORD=test-postgres-password' in rendered"
           - "'traefik.http.routers.n8n.rule=Host(`n8n.test.local`)' in rendered"
+          # The image comes from n8n_version only; the template has no fallback pin (#60).
+          - "'image: n8nio/n8n:2.48.6' in rendered"
