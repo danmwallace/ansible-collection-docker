@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 # defaults file for baserow
 
-baserow_version: "2.3.2"
+baserow_version: "2.4.3"
 
 # false renders the compose project without starting or restarting the stack.
 baserow_deploy: true
