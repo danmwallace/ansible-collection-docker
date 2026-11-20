@@ -1,6 +1,6 @@
 services:
   unifi-network-application:
-    image: lscr.io/linuxserver/unifi-network-application:{{ unifi_version | default('9.0.114') }}
+    image: lscr.io/linuxserver/unifi-network-application:{{ unifi_version }}
     container_name: unifi-network-application
     environment:
       - PUID={{ unifi_puid }}

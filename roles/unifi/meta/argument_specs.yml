@@ -67,7 +67,7 @@ argument_specs:
         description: Image tag for docker.io/mongo.
         type: str
         required: false
-        default: 8.0.11
+        default: 8.0.38
       unifi_mongo_authsource:
         description: MongoDB auth source database.
         type: str
@@ -93,3 +93,8 @@ argument_specs:
         type: int
         required: false
         default: 1024
+      unifi_version:
+        description: Image tag for lscr.io/linuxserver/unifi-network-application. Pin to a specific release for reproducibility.
+        type: str
+        required: false
+        default: "10.6.109"

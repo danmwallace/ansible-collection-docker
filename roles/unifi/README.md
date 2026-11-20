@@ -24,12 +24,13 @@ Deploys the [UniFi Network Application](https://github.com/linuxserver/docker-un
 | `unifi_mongo_host` | str | no | `unifi-db` | MongoDB host (inside the `unifi_network`). |
 | `unifi_mongo_port` | int | no | `27017` | MongoDB port. |
 | `unifi_mongo_dbname` | str | no | `unifi` | MongoDB database name. |
-| `unifi_mongo_version` | str | no | `7.0.26` | Image tag for `docker.io/mongo`. |
+| `unifi_mongo_version` | str | no | `8.0.38` | Image tag for `docker.io/mongo`. Stay on the 8.0 line: a MongoDB major upgrade needs a `setFeatureCompatibilityVersion` step first. |
 | `unifi_mongo_authsource` | str | no | `admin` | MongoDB auth source. |
 | `unifi_mongo_initdb_root_username` | str | no | `root` | MongoDB root username. |
 | `unifi_mongo_tls` | str | no | `"false"` | Whether the UniFi app should connect to MongoDB over TLS. String, not bool. |
 | `unifi_mem_limit` | int | no | `1024` | JVM max heap (MB). |
 | `unifi_mem_startup` | int | no | `1024` | JVM initial heap (MB). |
+| `unifi_version` | str | no | `"10.6.109"` | Image tag for `lscr.io/linuxserver/unifi-network-application`. Back up the controller (Settings → System → Backups) before raising it. |
 | `unifi_deploy` | bool | no | `true` | When `false`, renders the compose project under `/opt/docker/unifi/` without starting or restarting the stack (molecule uses this). |
 
 ## Dependencies
