@@ -35,7 +35,7 @@
         rendered: "{{ grafana_compose_contents.content | b64decode }}"
       ansible.builtin.assert:
         that:
-          - "'grafana/grafana:13.1.1' in rendered"
+          - "'grafana/grafana:13.3.1' in rendered"
           - "'GF_SECURITY_ADMIN_PASSWORD=test-admin-password' in rendered"
           - "'GF_SERVER_ROOT_URL=https://grafana.test.local' in rendered"
           - "'traefik.http.routers.grafana.rule=Host(`grafana.test.local`)' in rendered"

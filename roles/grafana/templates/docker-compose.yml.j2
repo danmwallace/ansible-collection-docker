@@ -1,6 +1,6 @@
 services:
   grafana:
-    image: grafana/grafana:{{ grafana_version | default('11.4.0') }}
+    image: grafana/grafana:{{ grafana_version }}
     restart: unless-stopped
     volumes:
       - grafana_data:/var/lib/grafana
