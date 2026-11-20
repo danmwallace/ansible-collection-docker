@@ -9,4 +9,4 @@
       vars:
         unifi_hostname: unifi.test.local
         unifi_mongo_pass: test-mongo-pw
-        unifi_mongo_initdb_root_password: test-root-pw
+        unifi_mongo_initdb_root_password: test-root-pw # molecule-test-only: fake value, not a real credential

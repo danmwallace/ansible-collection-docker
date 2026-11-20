@@ -17,4 +17,4 @@
         librechat_obsidian_mount_enabled: false
         # Minimal vault stub so template rendering doesn't trip on undefined refs
         vault_librechat_mongo_uri: "mongodb://test-mongo:27017/test"
-        vault_librechat_vector_postgres_password: test-vector-pw
+        vault_librechat_vector_postgres_password: test-vector-pw # molecule-test-only: fake value, not a real credential
