@@ -19,7 +19,7 @@ The Traefik dashboard is exposed through Traefik itself (router `traefik` → se
 | `traefik_hostname` | str | yes | — | Public hostname Traefik routes to its own dashboard (api@internal). |
 | `traefik_cloudflare_api_token` | str | yes | — | Cloudflare API token with Zone:DNS edit rights, used for DNS-01. **Supply from vault.** |
 | `traefik_cloudflare_email` | str | yes | — | Email Let's Encrypt associates with issued certificates and Cloudflare's `CF_API_EMAIL`. |
-| `traefik_version` | str | no | `v3.6.2` | Image tag for the `traefik` image. |
+| `traefik_version` | str | no | `v3.7.19` | Image tag for the `traefik` image. |
 | `traefik_deploy` | bool | no | `true` | When `false`, renders the compose project under `/opt/docker/traefik/` without starting or restarting the stack (molecule uses this). |
 
 ## Dependencies

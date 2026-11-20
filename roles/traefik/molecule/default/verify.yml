@@ -34,7 +34,7 @@
         rendered: "{{ traefik_compose.content | b64decode }}"
       ansible.builtin.assert:
         that:
-          - "'image: traefik:v3.6.2' in rendered"
+          - "('image: traefik:' ~ traefik_version) in rendered"
           - "'CF_API_EMAIL=test@test.local' in rendered"
           - "'CF_DNS_API_TOKEN=test-cloudflare-token' in rendered"
           - "'traefik.http.routers.traefik.rule=Host(`traefik.test.local`)' in rendered"
