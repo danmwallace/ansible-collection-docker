@@ -3,8 +3,8 @@ argument_specs:
   main:
     short_description: Deploy AdGuard Home DNS server in Docker behind Traefik via Docker Compose.
     description:
-      - Creates /opt/docker/adguard/{data,data/conf,data/work} owned by ansible:docker, renders a docker-compose.yml that runs adguard/adguardhome:latest on the
-        external proxy_network, and brings the stack up with community.docker.docker_compose_v2.
+      - Creates /opt/docker/adguard/{data,data/conf,data/work} owned by ansible:docker, renders a docker-compose.yml that runs
+        adguard/adguardhome:<adguard_version> on the external proxy_network, and brings the stack up with community.docker.docker_compose_v2.
       - The container publishes DNS (53/tcp+udp), DHCP (67/udp), DoT (853/tcp+udp), DoQ (8853/udp), and DoH (5443/tcp+udp) on the host; the web UI is routed by
         Traefik on the supplied hostname.
     author:
@@ -18,3 +18,8 @@ argument_specs:
         description: Public hostname Traefik routes to the AdGuard Home web UI.
         type: str
         required: true
+      adguard_version:
+        description: Image tag for adguard/adguardhome. Pin to a specific release for reproducibility.
+        type: str
+        required: false
+        default: "v0.107.80"
