@@ -3,9 +3,9 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Start traefik-instance container
+    - name: Start docker-traefik-instance container
       containers.podman.podman_container:
-        name: traefik-instance
+        name: docker-traefik-instance
         image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init

@@ -3,9 +3,9 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Start semaphore-instance container
+    - name: Start docker-semaphore-instance container
       containers.podman.podman_container:
-        name: semaphore-instance
+        name: docker-semaphore-instance
         image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init

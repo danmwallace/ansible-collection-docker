@@ -3,9 +3,9 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Start baserow-instance container
+    - name: Start docker-baserow-instance container
       containers.podman.podman_container:
-        name: baserow-instance
+        name: docker-baserow-instance
         image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init

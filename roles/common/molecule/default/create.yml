@@ -3,11 +3,11 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Start common-instance container
+    - name: Start docker-common-instance container
       containers.podman.podman_container:
-        name: common-instance
+        name: docker-common-instance
         image: docker.io/jrei/systemd-ubuntu:noble
-        hostname: common-instance
+        hostname: docker-common-instance
         state: started
         command: /sbin/init
         privileged: true

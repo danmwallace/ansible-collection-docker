@@ -3,11 +3,11 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Start common-fedora-instance container
+    - name: Start docker-common-fedora-instance container
       containers.podman.podman_container:
-        name: common-fedora-instance
+        name: docker-common-fedora-instance
         image: docker.io/jrei/systemd-fedora:42
-        hostname: common-fedora-instance
+        hostname: docker-common-fedora-instance
         state: started
         command: /sbin/init
         privileged: true

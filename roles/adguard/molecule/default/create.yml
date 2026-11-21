@@ -3,9 +3,9 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Start adguard-instance container
+    - name: Start docker-adguard-instance container
       containers.podman.podman_container:
-        name: adguard-instance
+        name: docker-adguard-instance
         image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init

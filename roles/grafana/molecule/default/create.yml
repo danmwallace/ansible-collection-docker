@@ -3,9 +3,9 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Start grafana-instance container
+    - name: Start docker-grafana-instance container
       containers.podman.podman_container:
-        name: grafana-instance
+        name: docker-grafana-instance
         image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init
