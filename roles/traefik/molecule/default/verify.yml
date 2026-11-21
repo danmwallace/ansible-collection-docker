@@ -3,6 +3,10 @@
   hosts: molecule
   gather_facts: false
   tasks:
+    - name: Load traefik role defaults so the image assertion tracks the pinned tag
+      ansible.builtin.include_vars:
+        file: "{{ playbook_dir }}/../../defaults/main.yml"
+
     - name: Stat the rendered files
       ansible.builtin.stat:
         path: "{{ item }}"
