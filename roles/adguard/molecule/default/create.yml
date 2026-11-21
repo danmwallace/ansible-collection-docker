@@ -6,7 +6,7 @@
     - name: Start adguard-instance container
       containers.podman.podman_container:
         name: adguard-instance
-        image: quay.io/ansible/molecule-ubuntu:noble
+        image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init
         privileged: true

@@ -6,7 +6,7 @@
     - name: Start baserow-instance container
       containers.podman.podman_container:
         name: baserow-instance
-        image: quay.io/ansible/molecule-ubuntu:noble
+        image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init
         privileged: true

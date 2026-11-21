@@ -12,6 +12,10 @@ argument_specs:
     author:
       - Dan Wallace
     options:
+      unifi_deploy:
+        description: When false, render the compose project and its config without starting or restarting the stack (used by molecule).
+        type: bool
+        default: true
       unifi_hostname:
         description: Public hostname Traefik routes to the UniFi web UI.
         type: str

@@ -7,6 +7,7 @@
       ansible.builtin.include_role:
         name: danmwallace.docker.semaphore
       vars:
+        semaphore_deploy: false  # no Docker in the test container; verify checks the rendered files
         semaphore_hostname: semaphore.test.local
         semaphore_postgres_password: test-postgres-pw # molecule-test-only: fake value, not a real credential
         semaphore_admin_password: test-admin-pw # molecule-test-only: fake value, not a real credential

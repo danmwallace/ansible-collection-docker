@@ -15,6 +15,7 @@ Deploys [Baserow](https://baserow.io/), an open-source no-code database (Airtabl
 | --- | --- | --- | --- | --- |
 | `baserow_hostname` | str | yes | — | Public hostname Traefik routes to Baserow; also fed to the container as `BASEROW_PUBLIC_URL`. |
 | `baserow_version` | str | no | `'2.06'` | Image tag for `baserow/baserow`. |
+| `baserow_deploy` | bool | no | `true` | When `false`, renders the compose project under `/opt/docker/baserow/` without starting or restarting the stack (molecule uses this). |
 
 ## Dependencies
 

@@ -24,7 +24,7 @@
         rendered: "{{ baserow_compose_contents.content | b64decode }}"
       ansible.builtin.assert:
         that:
-          - "'baserow/baserow:2.2.2' in rendered"
+          - "'baserow/baserow:2.3.2' in rendered"
           - "'BASEROW_PUBLIC_URL: https://baserow.test.local' in rendered"
           - "'traefik.http.routers.baserow.rule=Host(`baserow.test.local`)' in rendered"
           - "'proxy_network' in rendered"

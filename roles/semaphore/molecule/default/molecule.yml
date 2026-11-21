@@ -1,6 +1,14 @@
 ---
 dependency:
   name: galaxy
+# Without this the playbooks run against no hosts ("skipping: no hosts matched") and verify
+# passes vacuously.
+ansible:
+  executor:
+    backend: ansible-playbook
+    args:
+      ansible_playbook:
+        - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/hosts.yml
 scenario:
   test_sequence:
     - dependency

@@ -20,6 +20,7 @@ Deploys [Grafana](https://grafana.com/oss/grafana/) as a Docker Compose stack un
 | `grafana_install_plugins` | str | no | `""` | Comma-separated plugin list (`GF_PLUGINS_PREINSTALL`). |
 | `grafana_cpu_limit` | str | no | `"2"` | Compose `deploy.resources.limits.cpus` value. |
 | `grafana_memory_limit` | str | no | `"2gb"` | Compose `deploy.resources.limits.memory` value. |
+| `grafana_deploy` | bool | no | `true` | When `false`, renders the compose project under `/opt/docker/grafana/` without starting or restarting the stack (molecule uses this). |
 
 ## Dependencies
 

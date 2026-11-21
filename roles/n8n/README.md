@@ -17,6 +17,7 @@ Deploys [n8n](https://n8n.io/), a self-hosted workflow automation platform, as a
 | `n8n_hostname` | str | yes | — | Public hostname Traefik routes to the n8n web UI; also used for `N8N_HOST` and `WEBHOOK_URL`. |
 | `n8n_encryption_key` | str | yes | — | n8n credentials encryption key (`N8N_ENCRYPTION_KEY`). **Supply from vault.** |
 | `n8n_postgres_password` | str | yes | — | Password for the n8n PostgreSQL user. **Supply from vault.** |
+| `n8n_deploy` | bool | no | `true` | When `false`, renders the compose project under `/opt/docker/n8n/` without starting or restarting the stack (molecule uses this). |
 
 ## Dependencies
 

@@ -127,6 +127,7 @@
     name: proxy_network
     state: present
   become: true
+  when: librechat_deploy | bool
   tags:
     - librechat-setup
     - librechat-deploy
@@ -139,5 +140,6 @@
     state: present
     pull: always
   become: false
+  when: librechat_deploy | bool
   tags:
     - librechat-deploy

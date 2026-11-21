@@ -54,7 +54,7 @@
       ansible.builtin.assert:
         that:
           - "'lscr.io/linuxserver/unifi-network-application' in rendered"
-          - "'docker.io/mongo:7.0.26' in rendered"
+          - "'docker.io/mongo:8.0.11' in rendered"
           - "'MONGO_PASS=test-mongo-pw' in rendered"
           - "'MONGO_INITDB_ROOT_PASSWORD=test-root-pw' in rendered"
           - "'MONGO_PORT=27017' in rendered"

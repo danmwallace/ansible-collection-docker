@@ -27,3 +27,4 @@
       - docker-compose.yml
     state: present
   become: true
+  when: grafana_deploy | bool

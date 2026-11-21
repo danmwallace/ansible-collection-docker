@@ -7,6 +7,7 @@
       ansible.builtin.include_role:
         name: danmwallace.docker.unifi
       vars:
+        unifi_deploy: false  # no Docker in the test container; verify checks the rendered files
         unifi_hostname: unifi.test.local
         unifi_mongo_pass: test-mongo-pw
         unifi_mongo_initdb_root_password: test-root-pw # molecule-test-only: fake value, not a real credential

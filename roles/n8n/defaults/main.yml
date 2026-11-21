@@ -3,3 +3,6 @@
 
 # Image version to deploy. Pin to a specific release for reproducibility.
 n8n_version: "2.32.7"
+
+# false renders the compose project without starting or restarting the stack.
+n8n_deploy: true

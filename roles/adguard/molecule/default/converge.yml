@@ -7,4 +7,5 @@
       ansible.builtin.include_role:
         name: danmwallace.docker.adguard
       vars:
+        adguard_deploy: false  # no Docker in the test container; verify checks the rendered files
         adguard_hostname: adguard.test.local

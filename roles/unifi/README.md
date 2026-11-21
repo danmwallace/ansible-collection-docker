@@ -30,6 +30,7 @@ Deploys the [UniFi Network Application](https://github.com/linuxserver/docker-un
 | `unifi_mongo_tls` | str | no | `"false"` | Whether the UniFi app should connect to MongoDB over TLS. String, not bool. |
 | `unifi_mem_limit` | int | no | `1024` | JVM max heap (MB). |
 | `unifi_mem_startup` | int | no | `1024` | JVM initial heap (MB). |
+| `unifi_deploy` | bool | no | `true` | When `false`, renders the compose project under `/opt/docker/unifi/` without starting or restarting the stack (molecule uses this). |
 
 ## Dependencies
 

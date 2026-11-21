@@ -9,3 +9,6 @@ adguard_bind_address: "{{ ansible_host }}"
 
 # Image version to deploy. Pin to a specific release for reproducibility.
 adguard_version: "v0.107.78"
+
+# false renders the compose project without starting or restarting the stack.
+adguard_deploy: true

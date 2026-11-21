@@ -10,3 +10,6 @@ grafana_memory_limit: "2gb"
 
 # Image version to deploy. Pin to a specific release for reproducibility.
 grafana_version: "13.1.1"
+
+# false renders the compose project without starting or restarting the stack.
+grafana_deploy: true

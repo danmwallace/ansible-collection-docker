@@ -1,18 +1,26 @@
 ---
-# NOTE: This scenario can't run end-to-end inside a podman test container —
-# the role's git clone needs internet access, and docker_network/
-# docker_compose_v2 need a running Docker daemon (which the test container
-# does not have). Lint-clean is the meaningful signal here; for a real test,
-# run the role against a host with Docker and a vault file defining the full
-# vault_librechat_* set (see the role README).
+# NOTE: The test container has no Docker daemon, so librechat_deploy: false skips
+# docker_network/docker_compose_v2; the git clone still needs internet access.
+# Converge clones and renders, and verify checks the rendered files. For a
+# real deploy test, run the role against a host with Docker and a vault file
+# defining the full vault_librechat_* set (see the role README).
 - name: Converge
   hosts: molecule
   gather_facts: true
   tasks:
+    # env.j2 references every vault_librechat_* secret with no default (the README has
+    # callers supply the full set). Stub each name the template uses so the list can't
+    # drift; the explicit values under vars: below take precedence.
+    - name: Ensure every vault_librechat_* secret env.j2 references has a test value
+      ansible.builtin.set_fact:
+        "{{ item }}": "test-value-not-a-secret" # molecule-test-only: fake value, not a real credential
+      loop: "{{ lookup('ansible.builtin.file', playbook_dir ~ '/../../templates/env.j2') | regex_findall('vault_librechat_[a-z0-9_]+') | unique }}"
+
     - name: Apply librechat role with test values
       ansible.builtin.include_role:
         name: danmwallace.docker.librechat
       vars:
+        librechat_deploy: false  # no Docker in the test container; verify checks the rendered files
         librechat_hostname: librechat.test.local
         librechat_obsidian_mount_enabled: false
         # Minimal vault stub so template rendering doesn't trip on undefined refs

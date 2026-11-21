@@ -6,7 +6,7 @@
     - name: Start semaphore-instance container
       containers.podman.podman_container:
         name: semaphore-instance
-        image: quay.io/ansible/molecule-ubuntu:noble
+        image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init
         privileged: true

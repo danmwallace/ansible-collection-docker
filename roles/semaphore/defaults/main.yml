@@ -10,3 +10,6 @@ semaphore_admin: admin
 semaphore_admin_name: Admin
 semaphore_admin_email: admin@localhost
 semaphore_ansible_host_key_checking: "false"
+
+# false renders the compose project without starting or restarting the stack.
+semaphore_deploy: true

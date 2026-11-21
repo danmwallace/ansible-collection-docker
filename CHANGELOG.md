@@ -7,6 +7,17 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 ## [Unreleased]
 
+### Added
+
+- `adguard`, `baserow`, `grafana`, `librechat`, `n8n`, `semaphore`, `traefik`, `unifi`: `<role>_deploy` (default `true`), as `arcane_deploy` in 1.4.0. When `false`, the role renders its files without creating the Docker network or starting or restarting the stack.
+
+### Fixed
+
+- Molecule: the `default` scenarios of `adguard`, `baserow`, `common`, `docker`, `grafana`, `librechat`, `n8n`, `semaphore`, `traefik` and `unifi` never passed their inventory, so converge and verify ran against no hosts and passed without testing anything (#63).
+  - They now pass the inventory, use `docker.io/jrei/systemd-ubuntu:noble` (`quay.io/ansible/molecule-ubuntu:noble` is gone), use `su` for become, and render with `<role>_deploy: false`.
+  - Image assertions that had never run were stale (`adguard`, `baserow`, `grafana`, `semaphore`, `unifi` mongo) and now match the pinned defaults.
+  - `common` sets the container hostname and installs `sudo`, as on a stock Ubuntu Server. `librechat` connects as `ansible` with passwordless sudo, the owner the role expects, installs `git`, and stubs every `vault_librechat_*` name `env.j2` references.
+
 ## [1.4.0] - 2026-11-15
 
 ### Security
