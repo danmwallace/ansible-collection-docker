@@ -30,6 +30,7 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
   - `baserow` `2.3.2` → `2.4.3` (#50). Back up `baserow_data`.
   - `grafana` `13.1.1` → `13.3.1` (#43). Back up `grafana_data`.
   - `librechat` API `v0.8.7` → `v0.8.9` (#55), now from `ghcr.io/librechat-ai/librechat-api` because upstream moved organisations and `ghcr.io/danny-avila/librechat-api` stops at `v0.8.8-rc4`; the checkout clones `LibreChat-AI/LibreChat`. Meilisearch `v1.53.2` → `v1.57.0` (#51), pgvector `0.8.6-pg16-bookworm` → `0.8.7-pg16-bookworm` (#56). Matches `danmwallace.podman`. A blank `librechat_mongo_auto_index` / `librechat_mongo_auto_create` now means enabled; see the role README.
+  - `n8n` `2.32.7` → `2.48.6` (#44). Back up Postgres. From 2.42.6, workflows can no longer add or edit the deprecated Function, Function Item and LangChain Code nodes (GHSA-9p7v); from 2.45.0 the durable scheduler is the default.
   - `semaphore` `v2.19.0` → `v2.20.23` (#45): no published 2.19 image has the GHSA-ffp6-w57q-758q / GHSA-q9cq-8j9q-r93m fixes. `pg_dump` first.
   - `unifi` `10.4.57` → `10.6.109` (#48), MongoDB `8.0.11` → `8.0.38` (#49, CVE-2025-14847 "MongoBleed", same 8.0 line).
   - `n8n` and `semaphore`: Postgres `17-alpine` (floating) → `17.12-alpine` (#59).
@@ -43,6 +44,7 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
   - Image assertions that had never run were stale (`adguard`, `baserow`, `grafana`, `semaphore`, `unifi` mongo) and now match the pinned defaults.
   - `common` sets the container hostname and installs `sudo`, as on a stock Ubuntu Server. `librechat` connects as `ansible` with passwordless sudo, the owner the role expects, installs `git`, and stubs every `vault_librechat_*` name `env.j2` references.
 - `traefik` molecule: `verify.yml` compares the image tag with `traefik_version` instead of a hard-coded `v3.6.2`.
+- `n8n`: the compose template fell back to `n8nio/n8n:1.73.1` when `n8n_version` was unset, bypassing the pin in `defaults/main.yml` (#60). The image now comes from `n8n_version` only. `n8n_version` is now in `argument_specs.yml` and the README.
 
 ## [1.4.0] - 2026-11-15
 

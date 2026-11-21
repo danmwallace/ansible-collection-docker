@@ -1,6 +1,6 @@
 # danmwallace.docker.n8n
 
-Deploys [n8n](https://n8n.io/), a self-hosted workflow automation platform, as a Docker Compose stack under `/opt/docker/n8n`. Brings up two containers: `n8n` (the app, image `n8nio/n8n:latest`) and `n8n-postgres` (the backing store, image `postgres:15`). Joins the external `proxy_network` Docker network and emits Traefik labels so the n8n web UI is served on the configured hostname.
+Deploys [n8n](https://n8n.io/), a self-hosted workflow automation platform, as a Docker Compose stack under `/opt/docker/n8n`. Brings up two containers: `n8n` (the app, image `n8nio/n8n` at the `n8n_version` tag) and `n8n-postgres` (the backing store, image `postgres:15`). Joins the external `proxy_network` Docker network and emits Traefik labels so the n8n web UI is served on the configured hostname.
 
 ## Requirements
 
@@ -17,6 +17,7 @@ Deploys [n8n](https://n8n.io/), a self-hosted workflow automation platform, as a
 | `n8n_hostname` | str | yes | — | Public hostname Traefik routes to the n8n web UI; also used for `N8N_HOST` and `WEBHOOK_URL`. |
 | `n8n_encryption_key` | str | yes | — | n8n credentials encryption key (`N8N_ENCRYPTION_KEY`). **Supply from vault.** |
 | `n8n_postgres_password` | str | yes | — | Password for the n8n PostgreSQL user. **Supply from vault.** |
+| `n8n_version` | str | no | `2.48.6` | Image tag for `n8nio/n8n`, pinned to a release. n8n migrates its database on start and can't be downgraded, so back up Postgres before raising it. |
 | `n8n_deploy` | bool | no | `true` | When `false`, renders the compose project under `/opt/docker/n8n/` without starting or restarting the stack (molecule uses this). |
 
 ## Dependencies
