@@ -1,6 +1,6 @@
 services:
   adguard:
-    image: adguard/adguardhome:{{ adguard_version | default('v0.107.63') }}
+    image: adguard/adguardhome:{{ adguard_version }}
     restart: always
     ports:
       - "{{ adguard_bind_address }}:53:53/tcp"

@@ -57,7 +57,7 @@
 
 - name: Clone LibreChat repository
   ansible.builtin.git:
-    repo: https://github.com/danny-avila/LibreChat.git
+    repo: https://github.com/LibreChat-AI/LibreChat.git
     dest: "{{ librechat_install_path }}/"
     version: "{{ librechat_version }}"
     clone: true

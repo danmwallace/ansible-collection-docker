@@ -15,6 +15,7 @@ Deploys [AdGuard Home](https://github.com/AdguardTeam/AdGuardHome), a network-wi
 | Variable | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `adguard_hostname` | str | yes | — | Public hostname Traefik routes to the AdGuard Home web UI. |
+| `adguard_version` | str | no | `"v0.107.80"` | Image tag for `adguard/adguardhome`. v1.0.0 is a new major and has not been validated with this role. |
 | `adguard_deploy` | bool | no | `true` | When `false`, renders the compose project under `/opt/docker/adguard/` without starting or restarting the stack (molecule uses this). |
 
 ## Dependencies

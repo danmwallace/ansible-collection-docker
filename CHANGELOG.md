@@ -11,6 +11,18 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 - `adguard`, `baserow`, `grafana`, `librechat`, `n8n`, `semaphore`, `traefik`, `unifi`: `<role>_deploy` (default `true`), as `arcane_deploy` in 1.4.0. When `false`, the role renders its files without creating the Docker network or starting or restarting the stack.
 
+### Changed
+
+- Image bumps to the current upstream release of each pinned line. Back up first where noted; each app migrates its data on start and downgrades are unsupported.
+  - `adguard` `v0.107.78` → `v0.107.80` (#52). Upstream's latest is v1.0.0, a new major, not taken here.
+  - `baserow` `2.3.2` → `2.4.3` (#50). Back up `baserow_data`.
+  - `grafana` `13.1.1` → `13.3.1` (#43). Back up `grafana_data`.
+  - `librechat` API `v0.8.7` → `v0.8.9` (#55), now from `ghcr.io/librechat-ai/librechat-api` because upstream moved organisations and `ghcr.io/danny-avila/librechat-api` stops at `v0.8.8-rc4`; the checkout clones `LibreChat-AI/LibreChat`. Meilisearch `v1.53.2` → `v1.57.0` (#51), pgvector `0.8.6-pg16-bookworm` → `0.8.7-pg16-bookworm` (#56). Matches `danmwallace.podman`. A blank `librechat_mongo_auto_index` / `librechat_mongo_auto_create` now means enabled; see the role README.
+  - `semaphore` `v2.19.0` → `v2.20.23` (#45): no published 2.19 image has the GHSA-ffp6-w57q-758q / GHSA-q9cq-8j9q-r93m fixes. `pg_dump` first.
+  - `unifi` `10.4.57` → `10.6.109` (#48), MongoDB `8.0.11` → `8.0.38` (#49, CVE-2025-14847 "MongoBleed", same 8.0 line).
+  - `n8n` and `semaphore`: Postgres `17-alpine` (floating) → `17.12-alpine` (#59).
+- `adguard`, `grafana`, `unifi`: drop the stale `| default(...)` image-tag fallbacks in the compose templates and declare `adguard_version`, `grafana_version` and `unifi_version` in `argument_specs.yml`.
+
 ### Fixed
 
 - Molecule: the `default` scenarios of `adguard`, `baserow`, `common`, `docker`, `grafana`, `librechat`, `n8n`, `semaphore`, `traefik` and `unifi` never passed their inventory, so converge and verify ran against no hosts and passed without testing anything (#63).

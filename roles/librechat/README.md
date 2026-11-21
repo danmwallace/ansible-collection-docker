@@ -27,15 +27,15 @@ The role exposes ~200 settings via `defaults/main.yml` — every LLM endpoint, e
 | Variable | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `librechat_hostname` | str | yes | — | Public hostname Traefik routes to the LibreChat UI. |
-| `librechat_version` | str | no | `v0.8.7` | Git ref of `danny-avila/LibreChat` to clone. Kept in step with `librechat_api_image`; `main` tracks upstream HEAD. |
+| `librechat_version` | str | no | `v0.8.9` | Git ref of `LibreChat-AI/LibreChat` to clone. Kept in step with `librechat_api_image`; `main` tracks upstream HEAD. |
 | `librechat_install_path` | path | no | `/opt/docker/librechat` | Filesystem location of the LibreChat checkout. |
 | `librechat_data_path` | path | no | `/opt/docker/librechat/data` | Subdirectory for persistent container volumes. Excluded from ownership-migration. |
 | `librechat_owner` | str | no | `ansible` | User that owns the checkout and config files. Must be in the docker group. |
 | `librechat_group` | str | no | `docker` | Group that owns the checkout and config files. |
 | `librechat_port` | int | no | `3080` | API/UI container port. |
-| `librechat_api_image` | str | no | `ghcr.io/danny-avila/librechat-api:v0.8.7` | API container image. |
-| `librechat_meilisearch_image` | str | no | `getmeili/meilisearch:v1.53.2` | Meilisearch container image. |
-| `librechat_vectordb_image` | str | no | `pgvector/pgvector:0.8.6-pg16-bookworm` | pgvector container image (Postgres 16 — changing the PG major requires a manual `pg_upgrade`/dump-restore of `librechat_data_path/vectordb`). |
+| `librechat_api_image` | str | no | `ghcr.io/librechat-ai/librechat-api:v0.8.9` | API container image. |
+| `librechat_meilisearch_image` | str | no | `getmeili/meilisearch:v1.57.0` | Meilisearch container image. |
+| `librechat_vectordb_image` | str | no | `pgvector/pgvector:0.8.7-pg16-bookworm` | pgvector container image (Postgres 16 — changing the PG major requires a manual `pg_upgrade`/dump-restore of `librechat_data_path/vectordb`). |
 | `librechat_ragapi_image` | str | no | `ghcr.io/danny-avila/librechat-rag-api-dev-lite:v0.9.0` | RAG API container image. |
 | `librechat_vectordb_postgres_db` | str | no | `librechat` | pgvector database name. |
 | `librechat_vectordb_postgres_user` | str | no | `librechat` | pgvector database user. |
@@ -78,7 +78,7 @@ None declared in `meta/main.yml`. In practice the target host needs Docker, the 
     - role: danmwallace.docker.librechat
       vars:
         librechat_hostname: chat.example.com
-        librechat_version: v0.8.7
+        librechat_version: v0.8.9
         librechat_endpoints: anthropic,openai
         librechat_obsidian_mount_enabled: false
 ```
@@ -106,7 +106,11 @@ Example: `ansible-playbook ... --tags librechat-config` re-renders the config fi
 
 - `librechat_version` defaults to the same release as `librechat_api_image`; keep the two aligned when overriding, since the checkout supplies `librechat.yaml` schema and client assets the API image expects. Setting it to `main` tracks upstream HEAD, which is convenient but fragile.
 - The compose file is rendered to `docker-compose.ansible.yml`, not upstream's tracked `docker-compose.yml`, so the `force: true` git update never reverts it and the stack is not restarted on every converge.
-- Meilisearch will not start on a data directory written by an older version unless `MEILI_UPGRADE_DB` is set. `librechat_meilisearch_upgrade_db` defaults to `true` so the 1.3.1 bump from v1.49 to v1.53 upgrades `librechat_data_path/meilisearch` in place. Take a copy of that directory first if the index matters to you; the upgrade is one-way.
+- Meilisearch will not start on a data directory written by an older version unless `MEILI_UPGRADE_DB` is set. `librechat_meilisearch_upgrade_db` defaults to `true` so image bumps (e.g. v1.53 to v1.57) upgrade `librechat_data_path/meilisearch` in place. Take a copy of that directory first if the index matters to you; the upgrade is one-way.
+- **Image registry move.** Upstream moved to the `LibreChat-AI` GitHub organisation during v0.8.8. `ghcr.io/danny-avila/librechat-api` stops at `v0.8.8-rc4`; releases from v0.8.8 on are published as `ghcr.io/librechat-ai/librechat-api`. An inventory that overrides `librechat_api_image` with the old path must switch to the new one. The role now clones from `LibreChat-AI/LibreChat`; `ansible.builtin.git` updates the `origin` URL of an existing checkout.
+- **`MONGO_AUTO_INDEX` / `MONGO_AUTO_CREATE`.** `librechat_mongo_auto_index` and `librechat_mongo_auto_create` default to `""`. Up to v0.8.7 a blank value meant disabled; in v0.8.9 (`optionalEnabled()` in `api/db/connect.js`) a blank value means Mongoose's default, which is **enabled**. Set both to `"false"` to keep the old behaviour.
+- **MCP name reservations (v0.8.9).** Deployments that created MCP servers in the UI should run upstream's one-off [MCP name reservation migration](https://www.librechat.ai/docs/configuration/upgrade#mcp-name-reservation-migration) after upgrading.
+- The pgvector image ships new extension binaries, but an existing database keeps the old extension version until you run `ALTER EXTENSION vector UPDATE;` in it.
 - The role runs the file/template/git/docker_compose tasks as `librechat_owner` (`become: false`) rather than root, which requires the connecting user to actually be that user (or to have ssh agent forwarding / become_user wired up). Only the install-dir create, ownership migration, data-dir create, and docker_network tasks run as root.
 - The ownership-migration task at the start exists for upgrades from earlier deployments that cloned LibreChat as root; on fresh installs it's a no-op.
 

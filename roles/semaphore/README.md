@@ -16,7 +16,7 @@ Deploys [Semaphore UI](https://www.semaphoreui.com/), a web frontend for Ansible
 | `semaphore_hostname` | str | yes | — | Public hostname Traefik routes to the Semaphore web UI. |
 | `semaphore_postgres_password` | str | yes | — | Password for the Semaphore PostgreSQL user. **Supply from vault.** |
 | `semaphore_admin_password` | str | yes | — | Initial Semaphore admin password. **Supply from vault.** |
-| `semaphore_version` | str | no | `v2.16.47` | Image tag for `semaphoreui/semaphore`. |
+| `semaphore_version` | str | no | `v2.20.23` | Image tag for `semaphoreui/semaphore`. |
 | `semaphore_postgres_user` | str | no | `semaphore` | PostgreSQL user used by Semaphore. |
 | `semaphore_postgres_db` | str | no | `semaphore` | PostgreSQL database used by Semaphore. |
 | `semaphore_admin` | str | no | `admin` | Semaphore admin login name. |
@@ -42,6 +42,11 @@ None declared in `meta/main.yml`. In practice the target host needs Docker and t
         semaphore_admin_password: "{{ vault_semaphore_admin_password }}"
         semaphore_admin_email: ops@example.com
 ```
+
+## Notes
+
+- `semaphore_db` runs `postgres:17.12-alpine`, pinned in the compose template. Patch and minor bumps within Postgres 17 keep the on-disk format; a major bump needs a dump and restore.
+- Semaphore runs its database migrations on start and does not support downgrades. Take a `pg_dump` of the database before raising `semaphore_version` across a minor release (e.g. 2.19 to 2.20).
 
 ## License
 

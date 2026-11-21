@@ -20,6 +20,7 @@ Deploys [Grafana](https://grafana.com/oss/grafana/) as a Docker Compose stack un
 | `grafana_install_plugins` | str | no | `""` | Comma-separated plugin list (`GF_PLUGINS_PREINSTALL`). |
 | `grafana_cpu_limit` | str | no | `"2"` | Compose `deploy.resources.limits.cpus` value. |
 | `grafana_memory_limit` | str | no | `"2gb"` | Compose `deploy.resources.limits.memory` value. |
+| `grafana_version` | str | no | `"13.3.1"` | Image tag for `grafana/grafana`. |
 | `grafana_deploy` | bool | no | `true` | When `false`, renders the compose project under `/opt/docker/grafana/` without starting or restarting the stack (molecule uses this). |
 
 ## Dependencies
@@ -40,7 +41,7 @@ None declared in `meta/main.yml`. In practice the target host needs Docker and a
 
 ## Notes
 
-- The template uses `grafana/grafana:latest`. Pin a specific tag for reproducible deployments by editing the template (or, if useful enough, a follow-up could expose `grafana_version`).
+- The image is pinned by `grafana_version`. Grafana migrates its database schema on start and does not support downgrades, so back up the `grafana_data` volume before raising it.
 - The role creates `/opt/docker/grafana/data/provisioning` (mounted into the container at `/etc/grafana/provisioning`); drop datasource/dashboard provisioning YAML there to have Grafana pick it up on start.
 
 ## License
