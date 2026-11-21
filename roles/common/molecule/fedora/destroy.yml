@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Stop and remove common-fedora-instance container
+    - name: Stop and remove docker-common-fedora-instance container
       containers.podman.podman_container:
-        name: common-fedora-instance
+        name: docker-common-fedora-instance
         state: absent

@@ -3,9 +3,9 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Start arcane-instance container
+    - name: Start docker-arcane-instance container
       containers.podman.podman_container:
-        name: arcane-instance
+        name: docker-arcane-instance
         image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init

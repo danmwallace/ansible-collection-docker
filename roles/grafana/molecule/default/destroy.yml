@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Stop and remove grafana-instance container
+    - name: Stop and remove docker-grafana-instance container
       containers.podman.podman_container:
-        name: grafana-instance
+        name: docker-grafana-instance
         state: absent

@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Stop and remove unifi-instance container
+    - name: Stop and remove docker-unifi-instance container
       containers.podman.podman_container:
-        name: unifi-instance
+        name: docker-unifi-instance
         state: absent

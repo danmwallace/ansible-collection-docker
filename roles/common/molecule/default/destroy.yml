@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Stop and remove common-instance container
+    - name: Stop and remove docker-common-instance container
       containers.podman.podman_container:
-        name: common-instance
+        name: docker-common-instance
         state: absent

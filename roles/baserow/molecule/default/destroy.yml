@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Stop and remove baserow-instance container
+    - name: Stop and remove docker-baserow-instance container
       containers.podman.podman_container:
-        name: baserow-instance
+        name: docker-baserow-instance
         state: absent

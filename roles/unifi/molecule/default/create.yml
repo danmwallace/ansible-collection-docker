@@ -3,9 +3,9 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Start unifi-instance container
+    - name: Start docker-unifi-instance container
       containers.podman.podman_container:
-        name: unifi-instance
+        name: docker-unifi-instance
         image: docker.io/jrei/systemd-ubuntu:noble
         state: started
         command: /sbin/init

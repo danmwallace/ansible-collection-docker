@@ -59,6 +59,10 @@ Molecule — never run it inside this checkout with a collections-path override 
    cd /tmp/scratch/ansible_collections/danmwallace/docker/roles/<role> && molecule test
    ```
 
+Every `molecule.yml` sets `prerun: false` and installs the collection under test into `${MOLECULE_EPHEMERAL_DIRECTORY}/ansible_home` from `.config/molecule/collections.yml`, with `ANSIBLE_HOME` and `ANSIBLE_COLLECTIONS_PATH` pointed there. Without that, molecule's prerun overwrites `~/.ansible/collections/ansible_collections/danmwallace/docker`. Keep the block in new scenarios; `.config/molecule/collections.yml` explains why it can't live in a shared `.config/molecule/config.yml`.
+
+Instance and container names carry a `docker-` prefix (`docker-<role>-instance`), because `danmwallace.podman` runs scenarios for the same role names on the same Podman host.
+
 The Molecule scenarios use Podman as the driver via the **ansible-native delegated** pattern (`create.yml`/`destroy.yml` in each scenario manage the container directly via `containers.podman.podman_container`). There is no `driver:` block in `molecule.yml` — do not add one, and do not regress to the deprecated `driver: name: docker` shape.
 
 ## Architecture and Conventions
