@@ -25,8 +25,10 @@
       ansible.builtin.assert:
         that:
           - "'arcane.test.local' in rendered"
-          - "'ghcr.io/getarcaneapp/arcane:v2.10.2' in rendered"
-          - "'docker-socket-proxy:v0.5.0' in rendered"
+          - "'ghcr.io/getarcaneapp/manager:v3.1.1' in rendered"
+          - "'getarcaneapp/arcane:' not in rendered"
+          # 3.4 tag plus the multi-arch index digest (#47).
+          - "'ghcr.io/tecnativa/docker-socket-proxy:3.4@sha256:027f9fa5ee70be5836eeaa10ce889d7a83f34a8db16a7f412818b92997e0beab' in rendered"
           - "'traefik.http.routers.arcane.rule=Host(`arcane.test.local`)' in rendered"
           - "'POSTGRES_PASSWORD=test-postgres-password' in rendered"
 
@@ -41,8 +43,61 @@
           - "'postgres:17.11-alpine' in rendered"
           - "'postgres:17-alpine' not in rendered"
           # In compose list syntax the quotes would become part of the value.
-          - "'APP_URL=https://arcane.test.local' in rendered"
+          - "'ARCANE_APP_URL=https://arcane.test.local' in rendered"
           - "'APP_URL=\"' not in rendered"
+          # Arcane 3.x refuses to start if an unprefixed 2.x name is set, and ignores JWT_SECRET.
+          - "'- APP_URL=' not in rendered"
+          - "'- ENCRYPTION_KEY=' not in rendered"
+          - "'- DATABASE_URL=' not in rendered"
+          - "'- LOG_LEVEL=' not in rendered"
+          - "'ARCANE_ENCRYPTION_KEY=test-encryption-key-not-for-production' in rendered"
+          - "'ARCANE_DATABASE_URL=postgresql://arcane:test-postgres-password@arcane-postgres:5432/arcane' in rendered"
+          - "'JWT_SECRET' not in rendered"
+          # The POSTGRES_* names stay on arcane-postgres only.
+          - "rendered | regex_findall('POSTGRES_PASSWORD=') | length == 1"
           # OIDC_ENABLED without an issuer or client configured only breaks the login page.
           - "'OIDC_ENABLED' not in rendered"
         fail_msg: "{{ arcane_compose_contents.content | b64decode }}"
+
+    # The two guards fail before the role touches anything, so running them here
+    # leaves the converged instance as it was.
+    - name: Run the role with a 2.x arcane_version
+      block:
+        - name: Include arcane with arcane_version v2.17.3
+          ansible.builtin.include_role:
+            name: danmwallace.docker.arcane
+          vars:
+            arcane_hostname: arcane.test.local
+            arcane_deploy: false
+            arcane_version: v2.17.3
+            arcane_encryption_key: test-encryption-key-not-for-production # molecule-test-only: fake value, not a real credential
+            arcane_postgres_password: test-postgres-password # molecule-test-only: fake value, not a real credential
+
+        - name: Fail because the 2.x guard did not stop the role
+          ansible.builtin.fail:
+            msg: The role accepted arcane_version v2.17.3 with a 3.x-only compose template.
+      rescue:
+        - name: Assert the version guard is what stopped the role
+          ansible.builtin.assert:
+            that:
+              - "'older than v3.0.0' in ansible_failed_result.msg"
+
+    - name: Run the role with a 16-character encryption key
+      block:
+        - name: Include arcane with a short arcane_encryption_key
+          ansible.builtin.include_role:
+            name: danmwallace.docker.arcane
+          vars:
+            arcane_hostname: arcane.test.local
+            arcane_deploy: false
+            arcane_encryption_key: sixteen-chars-ok # molecule-test-only: fake value, not a real credential
+            arcane_postgres_password: test-postgres-password # molecule-test-only: fake value, not a real credential
+
+        - name: Fail because the key-length guard did not stop the role
+          ansible.builtin.fail:
+            msg: The role accepted a 16-character arcane_encryption_key, which Arcane 3.x refuses.
+      rescue:
+        - name: Assert the key-length guard is what stopped the role
+          ansible.builtin.assert:
+            that:
+              - "'min 32 chars' in ansible_failed_result.msg"
