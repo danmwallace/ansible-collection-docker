@@ -29,7 +29,7 @@ argument_specs:
         description: Image tag for the traefik image.
         type: str
         required: false
-        default: v3.6.2
+        default: v3.7.19
       traefik_https_bind_address:
         description:
           - IP address the HTTPS ingress port (443) is bound to.

@@ -3,6 +3,10 @@
   hosts: molecule
   gather_facts: false
   tasks:
+    - name: Load traefik role defaults so the image assertion tracks the pinned tag
+      ansible.builtin.include_vars:
+        file: "{{ playbook_dir }}/../../defaults/main.yml"
+
     - name: Stat the rendered files
       ansible.builtin.stat:
         path: "{{ item }}"
@@ -34,7 +38,7 @@
         rendered: "{{ traefik_compose.content | b64decode }}"
       ansible.builtin.assert:
         that:
-          - "'image: traefik:v3.6.2' in rendered"
+          - "('image: traefik:' ~ traefik_version) in rendered"
           - "'CF_API_EMAIL=test@test.local' in rendered"
           - "'CF_DNS_API_TOKEN=test-cloudflare-token' in rendered"
           - "'traefik.http.routers.traefik.rule=Host(`traefik.test.local`)' in rendered"

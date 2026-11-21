@@ -11,6 +11,10 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 - `adguard`, `baserow`, `grafana`, `librechat`, `n8n`, `semaphore`, `traefik`, `unifi`: `<role>_deploy` (default `true`), as `arcane_deploy` in 1.4.0. When `false`, the role renders its files without creating the Docker network or starting or restarting the stack.
 
+### Security
+
+- `traefik`: the default image moves from `v3.6.2` to `v3.7.19`, picking up the v3.7.14–v3.7.18 fixes for the SNI check bypass and the unauthenticated Compress-middleware memory DoS (#46). This matches `danmwallace.podman.traefik`.
+
 ### Changed
 
 - Image bumps to the current upstream release of each pinned line. Back up first where noted; each app migrates its data on start and downgrades are unsupported.
@@ -22,6 +26,7 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
   - `unifi` `10.4.57` → `10.6.109` (#48), MongoDB `8.0.11` → `8.0.38` (#49, CVE-2025-14847 "MongoBleed", same 8.0 line).
   - `n8n` and `semaphore`: Postgres `17-alpine` (floating) → `17.12-alpine` (#59).
 - `adguard`, `grafana`, `unifi`: drop the stale `| default(...)` image-tag fallbacks in the compose templates and declare `adguard_version`, `grafana_version` and `unifi_version` in `argument_specs.yml`.
+- `traefik`: replace the ACME `dnsChallenge.delayBeforeCheck`, deprecated since Traefik v3.3, with `dnsChallenge.propagation.delayBeforeChecks`. The value is the same (`0`).
 
 ### Fixed
 
@@ -29,6 +34,7 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
   - They now pass the inventory, use `docker.io/jrei/systemd-ubuntu:noble` (`quay.io/ansible/molecule-ubuntu:noble` is gone), use `su` for become, and render with `<role>_deploy: false`.
   - Image assertions that had never run were stale (`adguard`, `baserow`, `grafana`, `semaphore`, `unifi` mongo) and now match the pinned defaults.
   - `common` sets the container hostname and installs `sudo`, as on a stock Ubuntu Server. `librechat` connects as `ansible` with passwordless sudo, the owner the role expects, installs `git`, and stubs every `vault_librechat_*` name `env.j2` references.
+- `traefik` molecule: `verify.yml` compares the image tag with `traefik_version` instead of a hard-coded `v3.6.2`.
 
 ## [1.4.0] - 2026-11-15
 
