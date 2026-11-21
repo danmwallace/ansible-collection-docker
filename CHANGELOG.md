@@ -11,10 +11,6 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 - `arcane`: move to Arcane 3.x, default `v3.1.1` (#64). 2.x installs must run `v2.17.3` once before upgrading and back up first; see the role README. The image is now `ghcr.io/getarcaneapp/manager` and the Arcane variables carry the `ARCANE_` prefix. The role refuses an `arcane_version` older than `v3.0.0`, and an `arcane_encryption_key` shorter than 32 characters (3.x refuses it too). `arcane_jwt_secret` is optional and ignored, and the `POSTGRES_*` variables are no longer passed to the Arcane container.
 
-### Changed
-
-- `arcane`: socket-proxy moves from `v0.5.0` to the `3.4` tag pinned by its multi-arch index digest (`arcane_socket_proxy_version: "3.4@sha256:027f9fa5…"`) (#47). Upstream publishes no versioned tags after `v0.5.0`; `3.4` is the same proxy config on a newer HAProxy 3.4 base, with the same environment variables and port.
-
 ### Added
 
 - `adguard`, `baserow`, `grafana`, `librechat`, `n8n`, `semaphore`, `traefik`, `unifi`: `<role>_deploy` (default `true`), as `arcane_deploy` in 1.4.0. When `false`, the role renders its files without creating the Docker network or starting or restarting the stack.
@@ -36,6 +32,7 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
   - `n8n` and `semaphore`: Postgres `17-alpine` (floating) → `17.12-alpine` (#59).
 - `adguard`, `grafana`, `unifi`: drop the stale `| default(...)` image-tag fallbacks in the compose templates and declare `adguard_version`, `grafana_version` and `unifi_version` in `argument_specs.yml`.
 - `traefik`: replace the ACME `dnsChallenge.delayBeforeCheck`, deprecated since Traefik v3.3, with `dnsChallenge.propagation.delayBeforeChecks`. The value is the same (`0`).
+- `arcane`: socket-proxy moves from `v0.5.0` to the `3.4` tag pinned by its multi-arch index digest (`arcane_socket_proxy_version: "3.4@sha256:027f9fa5…"`) (#47). Upstream publishes no versioned tags after `v0.5.0`; `3.4` is the same proxy config on a newer HAProxy 3.4 base, with the same environment variables and port.
 
 ### Fixed
 
