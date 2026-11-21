@@ -44,6 +44,7 @@ librechat_meilisearch_upgrade_db: true
 
 # Git ref (tag or branch) to clone LibreChat at. Pin to a release tag for
 # reproducibility; "main" tracks upstream HEAD.
+# renovate: datasource=github-tags depName=danny-avila/LibreChat
 librechat_version: "v0.8.9"
 
 # Filesystem layout for /opt/docker/librechat. Future work: revisit whether

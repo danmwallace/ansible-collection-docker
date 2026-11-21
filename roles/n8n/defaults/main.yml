@@ -2,6 +2,7 @@
 # defaults file for n8n
 
 # Image version to deploy. Pin to a specific release for reproducibility.
+# renovate: datasource=docker depName=n8nio/n8n
 n8n_version: "2.48.6"
 
 # false renders the compose project without starting or restarting the stack.

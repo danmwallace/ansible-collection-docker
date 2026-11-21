@@ -11,4 +11,5 @@ it_tools_bind_address: "127.0.0.1"
 
 # Image version to deploy. Pin to a specific release for reproducibility.
 # See https://hub.docker.com/r/corentinth/it-tools/tags for available versions.
+# renovate: datasource=docker depName=corentinth/it-tools versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)-[0-9a-f]+$
 it_tools_version: "2024.10.22-7ca5933"
