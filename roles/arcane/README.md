@@ -18,7 +18,7 @@ Deploys [Arcane](https://getarcane.app/), a modern web UI for managing Docker co
 | `arcane_jwt_secret` | str | no | — | **Deprecated, ignored.** Arcane 3.x signs sessions with its own key. Still accepted so existing inventories pass. |
 | `arcane_postgres_password` | str | yes | — | Password for the Arcane PostgreSQL user. Supply from vault. |
 | `arcane_version` | str | no | `v3.1.1` | Image tag for `ghcr.io/getarcaneapp/manager`. Must be `v3.0.0` or newer. |
-| `arcane_socket_proxy_version` | str | no | `v0.5.0` | Image tag for `ghcr.io/tecnativa/docker-socket-proxy`, which exposes a filtered Docker socket to Arcane. `v0.5.0` is the last versioned tag upstream publishes. |
+| `arcane_socket_proxy_version` | str | no | `3.4@sha256:027f9fa5ee70be5836eeaa10ce889d7a83f34a8db16a7f412818b92997e0beab` | What follows `ghcr.io/tecnativa/docker-socket-proxy:`, a tag or `tag@sha256:<digest>`. The proxy exposes a filtered Docker socket to Arcane. Upstream stopped versioned tags at `v0.5.0` and rebuilds `3.4` (HAProxy 3.4) weekly, so the default pins `3.4` to its multi-arch index digest (amd64, arm64, arm/v7 and others). |
 | `arcane_postgres_version` | str | no | `17.11-alpine` | Image tag for `postgres`, pinned to a patch release. |
 | `arcane_postgres_db` | str | no | `arcane` | PostgreSQL database name. |
 | `arcane_postgres_user` | str | no | `arcane` | PostgreSQL user name. |

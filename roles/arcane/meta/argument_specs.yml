@@ -29,10 +29,12 @@ argument_specs:
         required: false
         default: 17.11-alpine
       arcane_socket_proxy_version:
-        description: Image tag for ghcr.io/tecnativa/docker-socket-proxy used to safely expose the Docker socket to Arcane.
+        description:
+          - Image reference after ghcr.io/tecnativa/docker-socket-proxy, used to safely expose the Docker socket to Arcane.
+          - Either a tag, or a tag plus its digest (tag@sha256:...). The default pins the floating 3.4 tag to its multi-arch index digest.
         type: str
         required: false
-        default: v0.5.0
+        default: "3.4@sha256:027f9fa5ee70be5836eeaa10ce889d7a83f34a8db16a7f412818b92997e0beab"
       arcane_encryption_key:
         description:
           - Encryption key used by Arcane (ARCANE_ENCRYPTION_KEY), supplied from vault.

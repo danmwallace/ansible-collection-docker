@@ -5,8 +5,10 @@
 # 3.x only: the template uses the 3.x image name and ARCANE_ env names. Upgrading
 # from 2.x goes through v2.17.3 first; see the README.
 arcane_version: v3.1.1
-# Tecnativa publishes no versioned tag after v0.5.0 (only lts, latest and 3.4).
-arcane_socket_proxy_version: v0.5.0
+# Tecnativa now publishes only floating tags (lts, latest, 3.4) rebuilt weekly, so the
+# tag is pinned to the multi-arch index digest; Renovate bumps the digest.
+# renovate: datasource=docker depName=ghcr.io/tecnativa/docker-socket-proxy
+arcane_socket_proxy_version: "3.4@sha256:027f9fa5ee70be5836eeaa10ce889d7a83f34a8db16a7f412818b92997e0beab"
 arcane_postgres_version: 17.11-alpine
 
 arcane_postgres_db: arcane

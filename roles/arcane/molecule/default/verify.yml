@@ -27,7 +27,8 @@
           - "'arcane.test.local' in rendered"
           - "'ghcr.io/getarcaneapp/manager:v3.1.1' in rendered"
           - "'getarcaneapp/arcane:' not in rendered"
-          - "'docker-socket-proxy:v0.5.0' in rendered"
+          # 3.4 tag plus the multi-arch index digest (#47).
+          - "'ghcr.io/tecnativa/docker-socket-proxy:3.4@sha256:027f9fa5ee70be5836eeaa10ce889d7a83f34a8db16a7f412818b92997e0beab' in rendered"
           - "'traefik.http.routers.arcane.rule=Host(`arcane.test.local`)' in rendered"
           - "'POSTGRES_PASSWORD=test-postgres-password' in rendered"
 
