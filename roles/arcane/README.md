@@ -7,6 +7,7 @@ Deploys [Arcane](https://getarcane.app/), a modern web UI for managing Docker co
 - Ansible >= 2.16
 - `community.docker` collection on the controller
 - Target host with Docker (or Podman compatible with `docker_compose_v2`) installed
+- Python `requests` on the target host, for `community.docker.docker_container_exec` (the Postgres readiness check). Hosts that run `danmwallace.docker.traefik` already have it, because its `docker_network` task needs it too.
 - An external Docker network named `proxy_network` on the target host (typically provisioned by the Traefik role)
 
 ## Role Variables
@@ -59,6 +60,18 @@ The role renders a 3.x-only compose file: the image is `ghcr.io/getarcaneapp/man
 4. **Check `arcane_encryption_key`.** Keep the value 2.x used (it decrypts stored credentials). If it is shorter than 32 characters, 3.x refuses to start and the role fails first with an assert. Changing the key means Arcane can no longer decrypt what 2.x stored with the old one, so plan to re-enter stored registry, Git and OIDC credentials, and do not upgrade until you have decided.
 5. **Deploy this role version.** `arcane_jwt_secret` can stay in the inventory; the role ignores it.
 6. **Afterwards:** set up notification providers again under System → Notifications (they are now global to the Manager), review custom roles (permissions were renamed; the built-in Deployer role loses `containers:update`), and update any scripts that call `/api/environments` (now `/api/agents`) or six-field cron schedules (now five-field, converted automatically).
+
+## Rolling out changes
+
+There is no restart handler. A changed `docker-compose.yml` reaches the containers in three steps, each container at most once (#77):
+
+1. `docker compose up` for `arcane-postgres` and `socket-proxy`, which recreates either one only if its own service definition changed.
+2. `pg_isready` over TCP inside `arcane-postgres`, retried for up to a minute, so Arcane never starts against a database that is still starting or running `initdb`.
+3. `docker compose up` for the whole project, which recreates Arcane if its definition changed (a new `arcane_version`, or a changed hostname, key or database URL).
+
+A Postgres-only change, such as a new `arcane_postgres_version`, recreates Postgres and leaves Arcane running; Arcane reconnects. Up to 2.0.1 a handler then ran `docker compose restart`. That restarted every container a second time, Postgres included, right after the recreate. Arcane then waited for its stale actor-host registration to expire and served about 2.5 minutes of 502s on every upgrade.
+
+The `upgrade` molecule scenario (`cd roles/arcane && molecule test -s upgrade`) runs the stack under real Docker. It bumps the versions and counts each container's `start` events, and asserts `/api/health` reports `UP` within 60 seconds.
 
 ## Notes
 

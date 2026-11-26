@@ -37,7 +37,46 @@
     dest: /opt/docker/arcane/docker-compose.yml
     mode: "0600"
   become: true
-  notify: Restart arcane compose project
+
+# No restart handler: `up` already recreates exactly the services whose config
+# changed. A `state: restarted` handler on top of it restarted every container a
+# second time, Postgres included, under the freshly recreated Arcane, which then
+# waited ~2.5 min for its stale actor-host registration to expire (#77).
+#
+# Arcane's backing services come up first, and Arcane only once Postgres
+# accepts connections, so a recreated Arcane never races the database.
+- name: Ensure arcane-postgres and socket-proxy are up
+  community.docker.docker_compose_v2:
+    project_src: /opt/docker/arcane/
+    files:
+      - docker-compose.yml
+    services:
+      - arcane-postgres
+      - socket-proxy
+    state: present
+  become: true
+  when: arcane_deploy | bool
+
+# TCP, not the Unix socket: during first-run initdb the entrypoint's temporary
+# server listens only on the socket, so a socket check would pass too early.
+- name: Ensure arcane-postgres accepts connections before Arcane starts
+  community.docker.docker_container_exec:
+    container: arcane-postgres
+    argv:
+      - pg_isready
+      - --host=127.0.0.1
+      - --port=5432
+      - --username={{ arcane_postgres_user }}
+      - --dbname={{ arcane_postgres_db }}
+  become: true
+  register: arcane_postgres_ready
+  until: arcane_postgres_ready.rc | default(1) == 0
+  retries: 30
+  delay: 2
+  changed_when: false
+  when:
+    - arcane_deploy | bool
+    - not ansible_check_mode
 
 - name: Deploy arcane via docker compose
   community.docker.docker_compose_v2:

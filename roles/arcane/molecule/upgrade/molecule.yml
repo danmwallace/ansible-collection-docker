@@ -1,0 +1,32 @@
+---
+# Runs the stack for real (Docker inside the instance) to prove that a version
+# bump or config change starts each container exactly once, in dependency
+# order (#77). The default scenario only checks the rendered file.
+#
+# Keep this run out of the owner's ~/.ansible; see .config/molecule/collections.yml.
+prerun: false
+dependency:
+  name: galaxy
+  options:
+    force: true
+    collections-path: ${MOLECULE_EPHEMERAL_DIRECTORY}/ansible_home/collections
+    requirements-file: ${MOLECULE_PROJECT_DIRECTORY}/../../.config/molecule/collections.yml
+ansible:
+  executor:
+    backend: ansible-playbook
+    args:
+      ansible_playbook:
+        - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/hosts.yml
+  env:
+    ANSIBLE_HOME: ${MOLECULE_EPHEMERAL_DIRECTORY}/ansible_home
+    ANSIBLE_COLLECTIONS_PATH: ${MOLECULE_EPHEMERAL_DIRECTORY}/ansible_home/collections:${HOME}/.ansible/collections:/usr/share/ansible/collections
+scenario:
+  test_sequence:
+    - dependency
+    - destroy
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - destroy

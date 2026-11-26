@@ -7,6 +7,16 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-11-26
+
+### Fixed
+
+- `arcane`: a version bump or config change no longer restarts the stack twice (danmwallace/ansible-collection-docker#77). The `Restart arcane compose project` handler ran `docker compose restart` right after `docker compose up` had already recreated the changed services. That restarted Postgres under the new Arcane, which then served about 2.5 minutes of 502s while its stale actor-host registration expired. The handler is gone. The role now brings up `arcane-postgres` and `socket-proxy`, waits for `pg_isready` over TCP, then runs `up` for the project, so each changed container is recreated once, after the database is ready. The rendered `docker-compose.yml` is unchanged. The readiness check uses `community.docker.docker_container_exec`, which needs Python `requests` on the host (`traefik` already needs it).
+
+### Added
+
+- `arcane`: an `upgrade` molecule scenario that runs the stack under Docker. It bumps the Arcane version, re-runs unchanged, then changes all three services at once. Each round asserts the number of `start` events per container (1 for each changed container, 0 otherwise), that Arcane started after its dependencies, and that `/api/health` reports `UP` within 60 seconds.
+
 ## [2.0.1] - 2026-11-26
 
 ### Fixed

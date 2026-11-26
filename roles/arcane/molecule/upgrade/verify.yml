@@ -1,0 +1,37 @@
+---
+# Each round re-applies the role with changed inputs, then counts the Docker
+# "start" events per container during the round (a recreate and a restart each
+# emit exactly one) and checks Arcane's /api/health within a short timeout.
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  vars:
+    arcane_upgrade_rounds:
+      - name: Arcane version bump
+        arcane_hostname: arcane.test.local
+        arcane_version: v3.1.1
+        arcane_postgres_version: 17.10-alpine
+        arcane_socket_proxy_version: "{{ arcane_upgrade_default_socket_proxy }}"
+        expected_starts: {arcane-postgres: 0, arcane-socket-proxy: 0, arcane: 1}
+      - name: Unchanged re-run
+        arcane_hostname: arcane.test.local
+        arcane_version: v3.1.1
+        arcane_postgres_version: 17.10-alpine
+        arcane_socket_proxy_version: "{{ arcane_upgrade_default_socket_proxy }}"
+        expected_starts: {arcane-postgres: 0, arcane-socket-proxy: 0, arcane: 0}
+      # An env var on Arcane, the Postgres image and the socket-proxy image all
+      # change at once, as on a collection upgrade that touches every service.
+      - name: Every service changes
+        arcane_hostname: arcane2.test.local
+        arcane_version: v3.1.1
+        arcane_postgres_version: 17.11-alpine
+        arcane_socket_proxy_version: "3.4"
+        expected_starts: {arcane-postgres: 1, arcane-socket-proxy: 1, arcane: 1}
+    arcane_upgrade_default_socket_proxy: "3.4@sha256:027f9fa5ee70be5836eeaa10ce889d7a83f34a8db16a7f412818b92997e0beab"
+  tasks:
+    - name: Run each upgrade round
+      ansible.builtin.include_tasks: tasks/round.yml
+      loop: "{{ arcane_upgrade_rounds }}"
+      loop_control:
+        loop_var: arcane_upgrade_round
+        label: "{{ arcane_upgrade_round.name }}"

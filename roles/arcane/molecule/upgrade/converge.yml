@@ -1,0 +1,15 @@
+---
+# Starts one release behind on Arcane and Postgres so verify.yml can bump them.
+- name: Converge
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Apply arcane role at the previous Arcane and Postgres releases
+      ansible.builtin.include_role:
+        name: danmwallace.docker.arcane
+      vars:
+        arcane_hostname: arcane.test.local
+        arcane_version: v3.1.0
+        arcane_postgres_version: 17.10-alpine
+        arcane_encryption_key: test-encryption-key-not-for-production # molecule-test-only: fake value, not a real credential
+        arcane_postgres_password: test-postgres-password # molecule-test-only: fake value, not a real credential
