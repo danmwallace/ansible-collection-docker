@@ -7,6 +7,8 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-11-26
+
 ### Changed (breaking)
 
 - `arcane`: move to Arcane 3.x, default `v3.1.1` (#64). 2.x installs must run `v2.17.3` once before upgrading and back up first; see the role README. The image is now `ghcr.io/getarcaneapp/manager` and the Arcane variables carry the `ARCANE_` prefix. The role refuses an `arcane_version` older than `v3.0.0`, and an `arcane_encryption_key` shorter than 32 characters (3.x refuses it too). `arcane_jwt_secret` is optional and ignored, and the `POSTGRES_*` variables are no longer passed to the Arcane container.
