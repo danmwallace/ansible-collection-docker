@@ -35,6 +35,27 @@ argument_specs:
           - IP address the HTTPS ingress port (443) is bound to.
           - Defaults to 0.0.0.0 (all interfaces), which is the expected behaviour for a public reverse proxy.
           - Override to a specific interface IP on dual-homed hosts to restrict which interface accepts inbound HTTPS.
+          - An empty string publishes 443 without an address, Docker's default of every IPv4 and IPv6 interface.
         type: str
         required: false
         default: "0.0.0.0"
+      traefik_dashboard_local_port:
+        description:
+          - Publish the plain dashboard entrypoint (:8081) on 127.0.0.1:8081 and pass the matching command-line flags.
+        type: bool
+        required: false
+        default: true
+      traefik_dashboard_via_hostname:
+        description:
+          - Attach the traefik router (Host traefik_hostname) to the dashboard service api@internal.
+          - The role adds no auth or IP allowlist middleware; set false where that hostname is reachable by anyone who should not see the dashboard.
+        type: bool
+        required: false
+        default: true
+      traefik_extra_env:
+        description:
+          - Extra environment variables for the Traefik container, as a NAME/value dict, rendered in sorted order.
+          - Values are rendered verbatim in compose list syntax; do not quote them. Example LEGO_DISABLE_CNAME_SUPPORT=true for the lego Cloudflare provider.
+        type: dict
+        required: false
+        default: {}

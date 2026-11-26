@@ -7,6 +7,19 @@ and this collection adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-11-26
+
+### Fixed
+
+- `traefik`: the ACME `storage` was the relative path `acme.json`, which resolves inside the container rather than on the `./letsencrypt` mount, so certificates were lost and re-requested from Let's Encrypt every time the container was recreated. It is now `/letsencrypt/acme.json`, and the role touches `/opt/docker/traefik/letsencrypt/acme.json` (root, 0600) instead of the unmounted `/opt/docker/traefik/acme.json`. Molecule asserts the path.
+
+### Added
+
+- `traefik`: `traefik_extra_env` (dict, default `{}`) for extra container environment, such as lego's `LEGO_DISABLE_CNAME_SUPPORT`.
+- `traefik`: `traefik_dashboard_local_port` (default `true`). `false` drops the `127.0.0.1:8081` dashboard port and its command-line flags.
+- `traefik`: `traefik_dashboard_via_hostname` (default `true`). `false` leaves the `traefik_hostname` router off `api@internal`; the role adds no auth or allowlist middleware to the dashboard.
+- `traefik`: an empty `traefik_https_bind_address` publishes 443 without an address (Docker's default: every IPv4 and IPv6 interface). The default stays `0.0.0.0`.
+
 ## [2.0.0] - 2026-11-26
 
 ### Changed (breaking)

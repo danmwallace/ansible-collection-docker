@@ -40,12 +40,23 @@
   become: true
   notify: Restart traefik compose project
 
-- name: Ensure acme.json exists with restrictive permissions
+- name: Ensure the letsencrypt directory exists
+  ansible.builtin.file:
+    path: /opt/docker/traefik/letsencrypt
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+# Traefik keeps its ACME account and certificate private keys here; it runs as
+# root in the container and refuses an acme.json readable by others.
+- name: Ensure letsencrypt/acme.json exists with restrictive permissions
   ansible.builtin.copy:
     content: ""
-    dest: /opt/docker/traefik/acme.json
-    owner: ansible
-    group: docker
+    dest: /opt/docker/traefik/letsencrypt/acme.json
+    owner: root
+    group: root
     mode: "0600"
     force: false
   become: true

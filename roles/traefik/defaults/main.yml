@@ -8,7 +8,21 @@ traefik_version: v3.7.19
 # Bind address for the HTTPS ingress port (443). Explicitly set to 0.0.0.0
 # to document that all-interfaces binding is intentional for a public reverse
 # proxy. Override to a specific interface IP on dual-homed hosts.
+# An empty string publishes 443 on every IPv4 and IPv6 interface (Docker's default).
 traefik_https_bind_address: "0.0.0.0"
+
+# Publish the plain dashboard entrypoint on 127.0.0.1:8081.
+traefik_dashboard_local_port: true
+
+# Route traefik_hostname to the dashboard (api@internal). The role adds no auth
+# or allowlist middleware, so set false where that hostname is reachable by
+# anyone who should not see the dashboard.
+traefik_dashboard_via_hostname: true
+
+# Extra environment variables for the Traefik container, as NAME: value. Values
+# are rendered verbatim into compose list syntax, so do not quote them. Use for
+# lego DNS-provider options such as LEGO_DISABLE_CNAME_SUPPORT.
+traefik_extra_env: {}
 
 # false renders the compose project without starting or restarting the stack.
 traefik_deploy: true
