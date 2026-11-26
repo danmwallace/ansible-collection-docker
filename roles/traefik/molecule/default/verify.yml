@@ -14,7 +14,6 @@
         - /opt/docker/traefik/docker-compose.yml
         - /opt/docker/traefik/traefik.yml
         - /opt/docker/traefik/dynamic_conf.yml
-        - /opt/docker/traefik/acme.json
       register: traefik_files
 
     - name: Assert all rendered files exist with mode 0600 owned by ansible:docker
@@ -27,6 +26,18 @@
       loop: "{{ traefik_files.results }}"
       loop_control:
         label: "{{ item.item }}"
+
+    - name: Stat acme.json on the letsencrypt mount
+      ansible.builtin.stat:
+        path: /opt/docker/traefik/letsencrypt/acme.json
+      register: traefik_acme
+
+    - name: Assert acme.json is on the mount, root-owned and 0600
+      ansible.builtin.assert:
+        that:
+          - traefik_acme.stat.exists
+          - traefik_acme.stat.mode == '0600'
+          - traefik_acme.stat.pw_name == 'root'
 
     - name: Read rendered docker-compose.yml
       ansible.builtin.slurp:
@@ -42,6 +53,13 @@
           - "'CF_API_EMAIL=test@test.local' in rendered"
           - "'CF_DNS_API_TOKEN=test-cloudflare-token' in rendered"
           - "'traefik.http.routers.traefik.rule=Host(`traefik.test.local`)' in rendered"
+          # The ACME store must sit on this mount (see traefik.yml below).
+          - "'./letsencrypt:/letsencrypt' in rendered"
+          - "'- LEGO_DISABLE_CNAME_SUPPORT=true' in rendered"
+          - "'0.0.0.0:443:443' in rendered"
+          - "'127.0.0.1:8081:8081' in rendered"
+          - "'--entrypoints.dash.address=:8081' in rendered"
+          - "'traefik.http.routers.traefik.service=api@internal' in rendered"
 
     - name: Read rendered traefik.yml
       ansible.builtin.slurp:
@@ -55,3 +73,27 @@
         that:
           - "'email: \"test@test.local\"' in rendered"
           - "'provider: cloudflare' in rendered"
+          # A relative path resolves inside the container, off the mount, and
+          # loses every certificate when the container is recreated.
+          - "'storage: /letsencrypt/acme.json' in rendered"
+          - "'storage: acme.json' not in rendered"
+
+    - name: Render docker-compose.yml with no bind address and no local dashboard port
+      ansible.builtin.set_fact:
+        traefik_compose_alt: >-
+          {{ lookup('ansible.builtin.template', playbook_dir ~ '/../../templates/docker-compose.yml.j2',
+             template_vars={'traefik_https_bind_address': '', 'traefik_dashboard_local_port': false,
+                            'traefik_dashboard_via_hostname': false,
+                            'traefik_extra_env': {}, 'traefik_hostname': 'traefik.test.local',
+                            'traefik_cloudflare_email': 'test@test.local',
+                            'traefik_cloudflare_api_token': 'test-cloudflare-token'}) }}
+
+    - name: Assert 443 uses Docker's default bind and the 8081 entrypoint is gone
+      ansible.builtin.assert:
+        that:
+          - "'- \"443:443\"' in traefik_compose_alt"
+          - "'8081' not in traefik_compose_alt"
+          - "'command:' not in traefik_compose_alt"
+          - "'LEGO_' not in traefik_compose_alt"
+          - "'api@internal' not in traefik_compose_alt"
+        fail_msg: "{{ traefik_compose_alt }}"

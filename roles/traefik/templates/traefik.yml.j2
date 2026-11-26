@@ -34,7 +34,9 @@ certificatesResolvers:
   cloudflare:
     acme:
       email: "{{ traefik_cloudflare_email }}"
-      storage: acme.json
+{# On the ./letsencrypt bind mount. A relative path resolves inside the
+   container's filesystem, so certificates were lost on every recreate. #}
+      storage: /letsencrypt/acme.json
       dnsChallenge:
         provider: cloudflare
         propagation:

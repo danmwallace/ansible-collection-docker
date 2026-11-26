@@ -1,18 +1,26 @@
 services:
     traefik:
       image: traefik:{{ traefik_version }}
+{% if traefik_dashboard_local_port %}
       command:
         - "--api.dashboard=true"
         - "--entrypoints.dash.address=:8081"
+{% endif %}
       container_name: traefik
       restart: unless-stopped
       ports:
         #- "80:80"
-        - "{{ traefik_https_bind_address }}:443:443"
+{# An empty bind address keeps Docker's default: every IPv4 and IPv6 interface. #}
+        - "{{ (traefik_https_bind_address ~ ':') if traefik_https_bind_address else '' }}443:443"
+{% if traefik_dashboard_local_port %}
         - "127.0.0.1:8081:8081"  # Dashboard
+{% endif %}
       environment:
         - CF_API_EMAIL={{ traefik_cloudflare_email }}
         - CF_DNS_API_TOKEN={{ traefik_cloudflare_api_token }}
+{% for key, value in traefik_extra_env | dictsort %}
+        - {{ key }}={{ value }}
+{% endfor %}
       volumes:
         - "./traefik.yml:/etc/traefik/traefik.yml:ro,z"
         - "./dynamic_conf.yml:/etc/traefik/dynamic_conf.yml:ro,z"
@@ -26,7 +34,9 @@ services:
         - "traefik.http.routers.traefik.rule=Host(`{{ traefik_hostname }}`)"
         - "traefik.http.routers.traefik.entrypoints=websecure"
         - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
+{% if traefik_dashboard_via_hostname %}
         - "traefik.http.routers.traefik.service=api@internal"
+{% endif %}
 
 networks:
   proxy_network:
