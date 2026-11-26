@@ -1,0 +1,22 @@
+---
+- name: Create molecule instance
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    # Docker runs inside this container. A private cgroup namespace gives dockerd
+    # a writable cgroup tree under rootless Podman (with the host's, runc gets
+    # "permission denied" creating its scope), and the volumes keep Docker's
+    # overlay storage off the instance's own overlay root, which the kernel
+    # refuses to stack on.
+    - name: Start docker-arcane-upgrade-instance container
+      containers.podman.podman_container:
+        name: docker-arcane-upgrade-instance
+        image: docker.io/jrei/systemd-ubuntu:noble
+        state: started
+        command: /sbin/init
+        privileged: true
+        systemd: always
+        cgroupns: private
+        volumes:
+          - docker-arcane-upgrade-docker:/var/lib/docker
+          - docker-arcane-upgrade-containerd:/var/lib/containerd

@@ -1,0 +1,17 @@
+---
+- name: Destroy molecule instance
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Stop and remove docker-arcane-upgrade-instance container
+      containers.podman.podman_container:
+        name: docker-arcane-upgrade-instance
+        state: absent
+
+    - name: Remove the instance's Docker storage volumes
+      containers.podman.podman_volume:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - docker-arcane-upgrade-docker
+        - docker-arcane-upgrade-containerd

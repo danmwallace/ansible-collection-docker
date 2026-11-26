@@ -1,11 +1,8 @@
 ---
 # handlers file for arcane
 
-- name: Restart arcane compose project
-  community.docker.docker_compose_v2:
-    project_src: /opt/docker/arcane/
-    files:
-      - docker-compose.yml
-    state: restarted
-  become: true
-  when: arcane_deploy | bool
+# Intentionally empty. tasks/main.yml rolls changes out with `docker compose up`,
+# which recreates only the services whose config changed, in dependency order.
+# The old `state: restarted` handler restarted every container a second time
+# (#77).
+[]

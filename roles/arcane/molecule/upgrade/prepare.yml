@@ -1,0 +1,27 @@
+---
+- name: Prepare molecule instance
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Install Docker with the collection's docker role
+      ansible.builtin.include_role:
+        name: danmwallace.docker.docker
+
+    # community.docker's API modules (docker_container_exec, docker_network) talk
+    # to the daemon through requests.
+    - name: Ensure python3-requests is installed
+      ansible.builtin.apt:
+        name: python3-requests
+        state: present
+
+    - name: Ensure docker.service is running
+      ansible.builtin.systemd_service:
+        name: docker.service
+        state: started
+        enabled: true
+
+    # danmwallace.docker.traefik creates this network on a real host.
+    - name: Ensure proxy_network exists
+      community.docker.docker_network:
+        name: proxy_network
+        state: present
